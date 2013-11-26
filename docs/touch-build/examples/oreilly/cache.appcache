@@ -1,0 +1,18 @@
+CACHE MANIFEST
+# 58daa1fbe1844c8e991a8531597b33d2052c9983
+index.html
+# b2f0f8bda00e6c5c04e466b664cecabd188fa7c1
+data/feed.js
+# bc2c7731f110e3287281bb98ce2c696b98b7da44
+data/about.html
+# 326d797d93b79fcb7e7e2caa7c7a0ac3d810ceda
+data/credits.html
+# 3010691fc6e4e1afa38b27e109257ba8a6f2789e
+data/sponsors.html
+
+
+FALLBACK:
+
+
+NETWORK:
+*
