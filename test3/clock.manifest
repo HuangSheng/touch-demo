@@ -1,0 +1,6 @@
+CACHE MANIFEST 
+ index.html 
+ ../Lib/resources/css/sencha-touch.css
+ app.css
+ ../Lib/sencha-touch.js
+ app-all.js

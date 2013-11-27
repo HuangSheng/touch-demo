@@ -1,3 +1,9 @@
+//<debug>
+Ext.Loader.setPath({
+    'Ext': '../Lib/src',
+    'NotesApp': 'app'
+});
+//</debug>
 Ext.application({
 	name: "NotesApp",
 	controllers: ["Notes"],
