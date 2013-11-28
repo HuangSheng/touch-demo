@@ -22,6 +22,7 @@ Ext.define("NotesApp.view.NotesListContainer", {
 		
 		var notesList = {
 			xtype: "noteslist",
+			serverStore: Ext.getStore("NotesList"),
 			// has no method getStore
 			// store: Ext.getStore("Notes"),
 			listeners: {

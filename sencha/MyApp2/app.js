@@ -1,27 +1,27 @@
-//<debug>
+// <debug>
 Ext.Loader.setPath({
-    'Ext': 'touch/src',
-    'NotesApp': 'app'
+	'Ext': 'touch/src',
+	'NotesApp': 'app'
 });
-//</debug>
+// </debug>
 
 Ext.application({
-
-    name: "NotesApp",
+	
+	name: "NotesApp",
 	controllers: ["Notes"],
 	models: ["Note"],
-	stores: ["Notes"],
+	stores: ["Notes", "NotesList"],
 	views: ["NotesList", "NotesListContainer", "NoteEditor"],
 	launch: function() {
 		// Destroy the #appLoadingIndicator element
-        Ext.fly('appLoadingIndicator').destroy();
+		Ext.fly('appLoadingIndicator').destroy();
 		var notesListContainer = {
 			xtype: "noteslistcontainer"
 		};
 		var noteEditor = {
 			xtype: "noteeditor"
 		};
-		Ext.Viewport.add([notesListContainer, noteEditor]);
+		Ext.Viewport.add( [notesListContainer, noteEditor]);
 		// var notesListContainer = Ext.create("NotesApp.view.NotesListContainer");
 		// Ext.Viewport.add(notesListContainer);
 	}

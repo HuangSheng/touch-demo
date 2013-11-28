@@ -3,21 +3,17 @@ Ext.define("NotesApp.default.DefaultList", {
 	alias: "widget.defaultList",
 	requires: ["Ext.plugin.ListPaging"],
 	initialize: function() {
-		this.getPlugins();
-		// this.setPlugins({
-		// xclass: 'Ext.plugin.ListPaging',
-		// autoPaging: true
-		// });
+		var plugins = this.getPlugins();
+		this.setPlugins( [{
+			xclass: 'Ext.plugin.ListPaging',
+			autoPaging: true
+		}, plugins[0].config]);
 		// this.setGrouped(true);
 		// this.setLoadingText("Loading Notes...");
 		this.callParent(arguments);
-		console.log("parent");
 	},
 	config: {
-		plugins: [{
-			xclass: 'Ext.plugin.ListPaging',
-			autoPaging: true
-		}],
+		scrollable: 'vertical',
 		grouped: true,
 		loadingText: "正在加载中,请稍后......"
 	}
