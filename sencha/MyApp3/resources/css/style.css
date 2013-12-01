@@ -1,0 +1,46 @@
+.title {
+	float: left;
+	width: 100%;
+	display: inline;
+	height: 50px;
+	line-height: 50px;
+	margin-left: 10px;
+	text-align: left;
+	display: inline;
+}
+
+.icon1 {
+	background-position: 0px 0px;
+	margin: 6px 5px 0 3px;
+	_margin: 6px 2px 0 3px;
+	width: 16px;
+	height: 16px;
+	float: left;
+	display: inline;
+	overflow: hidden;
+	background: url(../icons/qx.png) no-repeat;
+}
+
+.icon2 {
+	background-position: 0px 0px;
+	margin: 6px 5px 0 3px;
+	_margin: 6px 2px 0 3px;
+	width: 16px;
+	height: 16px;
+	float: left;
+	display: inline;
+	overflow: hidden;
+	background: url(../icons/rz.png) no-repeat;
+}
+
+.icon3 {
+	background-position: 0px 0px;
+	margin: 6px 5px 0 3px;
+	_margin: 6px 2px 0 3px;
+	width: 16px;
+	height: 16px;
+	float: left;
+	display: inline;
+	overflow: hidden;
+	background: url(../icons/gb.png) no-repeat;
+}

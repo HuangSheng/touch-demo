@@ -1,0 +1,15 @@
+{
+	"success": true,
+	"data": [{
+		"rtId": "100011",
+		"title": "主要参数"
+	}, {
+		"rtId": "100012",
+		"title": "#1机组"
+	}, {
+		"rtId": "100013",
+		"title": "#2机组"
+	}],
+	"totalCount": 4,
+	"msg": null
+}

@@ -1,0 +1,27 @@
+{
+	"success": true,
+	"data": [{
+		"resourceId": "100011",
+		"resourceName": "缺陷管理",
+		"resourceDesc": "Defect Management",
+		"shortExtjsClass": "defectList",
+		"extjsClass": "LCTY.view.index.DefectList",
+		"icon": "icon1"
+	}, {
+		"resourceId": "100012",
+		"resourceName": "生产日报",
+		"resourceDesc": "Daily Production Report",
+		"shortExtjsClass": "rtList",
+		"extjsClass": "LCTY.view.index.RtList",
+		"icon": "icon2"
+	}, {
+		"resourceId": "100013",
+		"resourceName": "实时数据",
+		"resourceDesc": "Real Time Data",
+		"shortExtjsClass": "rtList",
+		"extjsClass": "LCTY.view.index.RtList",
+		"icon": "icon3"
+	}],
+	"totalCount": 833,
+	"msg": null
+}
