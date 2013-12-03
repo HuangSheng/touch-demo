@@ -6,7 +6,10 @@ Ext.define("LCTY.model.index.DefectList", {
 			name: 'defectId',
 			type: 'string'
 		}, {
-			name: 'title',
+			name: 'defectNo',
+			type: 'string'
+		}, {
+			name: 'defectTitle',
 			type: 'string'
 		}, {
 			name: 'defectDate',

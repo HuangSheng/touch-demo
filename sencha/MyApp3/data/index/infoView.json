@@ -1,0 +1,11 @@
+{
+	"success": true,
+	"data": {
+		"infoId": "100011",
+		"infoNo": "00110001",
+		"infoDesc": "#1给煤机开关",
+		"infoAddr": "炉13米配电室内"
+	},
+	"totalCount": 13,
+	"msg": null
+}
