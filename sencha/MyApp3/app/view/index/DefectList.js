@@ -15,7 +15,7 @@ Ext.define("LCTY.view.index.DefectList", {
 		itemHeight: 65,
 		// grouped: false,
 		itemTpl: [// 子项样式
-		'<div class="list-item-title">{title}</div>',// 标题栏样式
+		'<div class="list-item-title">{defectTitle}</div>',// 标题栏样式
 		'<div class="list-item-narrative">{[this.dateFmt(values.defectDate)]}</div>',// 日期样式
 		{
 			dateFmt: function(defectDate) {

@@ -72,11 +72,18 @@
 		// 和服务器同步添加操作  
 		// alert("链接服务器");
 	}
+	window.onload = function() {
+		if(document.documentElement.scrollHeight <= document.documentElement.clientHeight) { 
+			bodyTag = document.getElementsByTagName('body')[0]; 
+			bodyTag.style.height = document.documentElement.clientWidth / screen.width * screen.height + 'px'; 
+		}
+		setTimeout(function() { 
+			window.scrollTo(0, 1); 
+		}, 0); 
+	};
 	</script>
-	
-	
 </head>
-<body onload="SyncWithServer()">
+<body>
     <div id="appLoadingIndicator">
         <div></div>
         <div></div>

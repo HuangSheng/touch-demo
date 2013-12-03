@@ -1,3 +1,9 @@
+.st-field-required .x-form-label:before {
+	content: "*";
+	display: inline;
+	color: red;
+}
+
 .title {
 	float: left;
 	width: 100%;
@@ -43,4 +49,368 @@
 	display: inline;
 	overflow: hidden;
 	background: url(../icons/gb.png) no-repeat;
+}
+
+/* Increase height of list item so title and narrative lines fit */
+.x-list .x-list-item .x-list-item-label {
+	min-height: 3.5em !important;
+}
+/* Move up the disclosure button to account for the list item height increase */
+.x-list .x-list-disclosure {
+	position: absolute;
+	bottom: 0.85em;
+	right: 0.44em;
+}
+
+.list-item-title {
+	float: left;
+	width: 100%;
+	font-size: 90%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 25px;
+	line-height: 150%;
+}
+
+.list-item-narrative {
+	float: left;
+	width: 95%;
+	color: #666666;
+	font-size: 80%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 25px;
+}
+
+.x-item-selected .list-item-title {
+	color: #ffffff;
+}
+
+.x-item-selected .list-item-narrative {
+	color: #ffffff;
+}
+
+.notes-list-empty-text {
+	padding: 10px;
+}
+
+.ui-li-divider,.ui-li-static {
+	padding: .5em 15px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.ui-content {
+	border-width: 0;
+	overflow: visible;
+	overflow-x: hidden;
+	padding: 15px;
+}
+
+.ui-content .ui-listview {
+	margin: -15px;
+}
+
+.ui-content .ui-listview-inset {
+	margin: 1em 0;
+}
+
+.ui-listview {
+	margin: 0;
+	counter-reset: listnumbering;
+}
+
+.ui-content .ui-listview {
+	margin: -15px;
+}
+
+.ui-content .ui-listview-inset {
+	margin: 1em 0;
+}
+
+.ui-listview,.ui-li {
+	list-style: none;
+	padding: 0;
+}
+
+.ui-listview,.ui-li {
+	list-style: none;
+	padding: 0;
+}
+
+ol.ui-listview .ui-link-inherit:before,ol.ui-listview .ui-li-static:before,.ui-li-dec
+	{
+	font-size: .8em;
+	display: inline-block;
+	padding-right: .3em;
+	font-weight: normal;
+	counter-increment: listnumbering;
+	content: counter(listnumbering) ". ";
+}
+
+ol.ui-listview .ui-li-jsnumbering:before {
+	content: "" !important;
+} /* to avoid chance of duplication */
+.ui-listview-inset .ui-li {
+	border-right-width: 1px;
+	border-left-width: 1px;
+}
+
+.ui-li-thumb,.ui-listview .ui-li-icon {
+	position: absolute;
+	left: 1px;
+	top: 0;
+	max-height: 80px;
+	max-width: 80px;
+}
+
+.ui-listview .ui-li-icon {
+	max-height: 16px;
+	max-width: 16px;
+	left: 10px;
+	top: .9em;
+}
+
+.ui-li-thumb,.ui-listview .ui-li-icon,.ui-li-content {
+	float: left;
+	margin-right: 10px;
+}
+
+.ui-listview * .ui-btn-inner>.ui-btn>.ui-btn-inner {
+	border-top: 0px;
+}
+
+.ui-listview-filter {
+	border-width: 0;
+	overflow: hidden;
+	margin: -15px -15px 15px -15px
+}
+
+.ui-listview-filter .ui-input-search {
+	margin: 5px;
+	width: auto;
+	display: block;
+}
+
+.ui-listview-filter-inset {
+	margin: -15px -5px -15px -5px;
+	background: transparent;
+}
+
+.ui-content .ui-listview-inset {
+	margin: 1em 0;
+}
+
+.ui-listview-inset .ui-li {
+	border-right-width: 1px;
+	border-left-width: 1px;
+}
+
+.ui-corner-all {
+	-moz-border-radius: .6em /*{global-radii-blocks}*/;
+	-webkit-border-radius: .6em /*{global-radii-blocks}*/;
+	border-radius: .6em /*{global-radii-blocks}*/;
+}
+
+/* radius clip workaround for cleaning up corner trapping */
+.ui-corner-tl,.ui-corner-tr,.ui-corner-bl,.ui-corner-br,.ui-corner-top,.ui-corner-bottom,.ui-corner-right,.ui-corner-left,.ui-corner-all,.ui-btn-corner-tl,.ui-btn-corner-tr,.ui-btn-corner-bl,.ui-btn-corner-br,.ui-btn-corner-top,.ui-btn-corner-bottom,.ui-btn-corner-right,.ui-btn-corner-left,.ui-btn-corner-all
+	{
+	-webkit-background-clip: padding-box;
+	-moz-background-clip: padding;
+	background-clip: padding-box;
+}
+
+.ui-shadow {
+	-moz-box-shadow: 0px 1px 4px /*{global-box-shadow-size}*/    
+		               
+		            			
+		 rgba(0, 0, 0, .3) /*{global-box-shadow-color}*/;
+	-webkit-box-shadow: 0px 1px 4px /*{global-box-shadow-size}*/         
+		            
+		          		
+		 rgba(0, 0, 0, .3) /*{global-box-shadow-color}*/;
+	box-shadow: 0px 1px 4px /*{global-box-shadow-size}*/                
+		                				
+		 rgba(0, 0, 0, .3) /*{global-box-shadow-color}*/;
+}
+
+.ui-li:last-child,.ui-li.ui-field-contain:last-child {
+	border-bottom-width: 1px;
+}
+
+.ui-li>.ui-btn-inner {
+	display: block;
+	position: relative;
+	padding: 0;
+}
+
+.ui-li .ui-btn-inner a.ui-link-inherit,.ui-li-static.ui-li {
+	padding: .7em 15px;
+	display: block;
+}
+
+.ui-li-has-arrow.ui-li-has-count .ui-btn-inner a.ui-link-inherit,.ui-li-static.ui-li-has-arrow.ui-li-has-count
+	{
+	padding-right: 75px;
+}
+
+.ui-body-d,.ui-overlay-d {
+	border: 1px solid #bbb /*{d-body-border}*/;
+	color: #333333 /*{d-body-color}*/;
+	text-shadow: 0 /*{d-body-shadow-x}*/                              1px
+		/*{d-body-shadow-y}*/                   
+		 
+		  
+		     
+		 0 /*{d-body-shadow-radius}*/                              	 #fff
+		/*{d-body-shadow-color}*/;
+	background: #ffffff /*{d-body-background-color}*/;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#fff),
+		to(#fff /*{d-body-background-end}*/)); /* Saf4+, Chrome */
+	background-image: -webkit-linear-gradient(#fff /*{d-body-background-start}*/, #fff
+		/*{d-body-background-end}*/); /* Chrome 10+, Saf5.1+ */
+	background-image: -moz-linear-gradient(#fff /*{d-body-background-start}*/, #fff
+		/*{d-body-background-end}*/); /* FF3.6 */
+	background-image: -ms-linear-gradient(#fff /*{d-body-background-start}*/, #fff
+		/*{d-body-background-end}*/); /* IE10 */
+	background-image: -o-linear-gradient(#fff /*{d-body-background-start}*/, #fff
+		/*{d-body-background-end}*/); /* Opera 11.10+ */
+	background-image: linear-gradient(#fff /*{d-body-background-start}*/, #fff
+		/*{d-body-background-end}*/);
+}
+
+.ui-corner-top {
+	-moz-border-radius-topleft: .6em /*{global-radii-blocks}*/;
+	-webkit-border-top-left-radius: .6em /*{global-radii-blocks}*/;
+	border-top-left-radius: .6em /*{global-radii-blocks}*/;
+	-moz-border-radius-topright: .6em /*{global-radii-blocks}*/;
+	-webkit-border-top-right-radius: .6em /*{global-radii-blocks}*/;
+	border-top-right-radius: .6em /*{global-radii-blocks}*/;
+}
+
+.ui-body-d,.ui-body-d input,.ui-body-d select,.ui-body-d textarea,.ui-body-d button
+	{
+	font-family: Helvetica, Arial, sans-serif /*{global-font-family}*/;
+}
+
+.ui-btn-up-d {
+	border: 1px solid #bbb /*{d-bup-border}*/;
+	background: #fff /*{d-bup-background-color}*/;
+	font-weight: bold;
+	color: #333 /*{d-bup-color}*/;
+	text-shadow: 0 /*{d-bup-shadow-x}*/       1px /*{d-bup-shadow-y}*/
+		      
+		 0 /*{d-bup-shadow-radius}*/       #fff /*{d-bup-shadow-color}*/;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#fafafa),
+		to(#f6f6f6 /*{d-bup-background-end}*/)); /* Saf4+, Chrome */
+	background-image: -webkit-linear-gradient(#fafafa /*{d-bup-background-start}*/, #f6f6f6
+		/*{d-bup-background-end}*/); /* Chrome 10+, Saf5.1+ */
+	background-image: -moz-linear-gradient(#fafafa /*{d-bup-background-start}*/, #f6f6f6
+		/*{d-bup-background-end}*/); /* FF3.6 */
+	background-image: -ms-linear-gradient(#fafafa /*{d-bup-background-start}*/, #f6f6f6
+		/*{d-bup-background-end}*/); /* IE10 */
+	background-image: -o-linear-gradient(#fafafa /*{d-bup-background-start}*/, #f6f6f6
+		/*{d-bup-background-end}*/); /* Opera 11.10+ */
+	background-image: linear-gradient(#fafafa /*{d-bup-background-start}*/, #f6f6f6
+		/*{d-bup-background-end}*/);
+}
+
+.ui-btn-inner {
+	font-size: 16px;
+	padding: .6em 20px;
+	min-width: .75em;
+	display: block;
+	position: relative;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	zoom: 1;
+}
+
+/* button inner top highlight
+-----------------------------------------------------------------------------------------------------------*/
+.ui-btn-inner {
+	border-top: 1px solid #fff;
+	border-color: rgba(255, 255, 255, .3);
+}
+
+.ui-btn-text {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+
+.ui-li .ui-btn-text a.ui-link-inherit {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.ui-li-divider .ui-btn-text,.ui-li-static .ui-btn-text {
+	font-size: 16px;
+}
+
+.ui-btn-icon-left>.ui-btn-inner>.ui-icon,.ui-btn-icon-right>.ui-btn-inner>.ui-icon
+	{
+	position: absolute;
+	top: 50%;
+	margin-top: -9px;
+}
+
+.ui-btn-icon-right .ui-icon {
+	right: 10px;
+}
+
+.ui-icon {
+	width: 18px;
+	height: 18px;
+}
+
+.ui-icon-shadow {
+	-moz-box-shadow: 0px 1px 0 rgba(255, 255, 255, .4)
+		/*{global-icon-shadow}*/;
+	-webkit-box-shadow: 0px 1px 0 rgba(255, 255, 255, .4)
+		/*{global-icon-shadow}*/;
+	box-shadow: 0px 1px 0 rgba(255, 255, 255, .4) /*{global-icon-shadow}*/;
+}
+
+.ui-btn-up-d,.ui-btn-hover-d,.ui-btn-down-d {
+	font-family: Helvetica, Arial, sans-serif /*{global-font-family}*/;
+}
+/* Icons
+-----------------------------------------------------------------------------------------------------------*/
+.ui-icon,.ui-icon-searchfield:after {
+	background: #666 /*{global-icon-color}*/;
+	background: rgba(0, 0, 0, .4) /*{global-icon-disc}*/;
+	background-image: url(../icons/icons-18-white.png) /*{global-icon-set}*/;
+	background-repeat: no-repeat;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
+	border-radius: 9px;
+}
+
+/* Alt icon color
+-----------------------------------------------------------------------------------------------------------*/
+.ui-icon-alt {
+	background: #fff;
+	background: rgba(255, 255, 255, .3);
+	background-image: url(../icons/icons-18-black.png);
+	background-repeat: no-repeat;
+}
+
+.ui-icon-arrow-r {
+	background-position: -108px 50%;
+}
+
+/* Odd iPad positioning issue. */
+@media only screen and (min-device-width: 768px) and (max-device-width:
+	1024px) {
+	.ui-li .ui-btn-text {
+		overflow: visible;
+	}
 }
