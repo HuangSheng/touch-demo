@@ -1,7 +1,7 @@
 Ext.define("LCTY.default.DefaultList", {
 	extend: "Ext.dataview.List",
 	alias: "widget.defaultList",
-	requires: ["Ext.plugin.ListPaging", "Ext.TitleBar"],
+	requires: ["Ext.plugin.ListPaging", "Ext.TitleBar", "LCTY.default.DefaultSearchForm"],
 	initialize: function() {
 		
 		if (this.getIsHavePage()) {
@@ -30,14 +30,33 @@ Ext.define("LCTY.default.DefaultList", {
 			tbar.push({
 				xtype: "button",
 				text: text,
-				ui: 'dark',
+				ui: 'back',
 				handler: function() {
 					this.up("navigationview").pop();
 				}
 			});
 		}
+		if (this.getIsHaveSearch()) {
+			var text = this.getDefaultSearchButtonText();
+			tbar.push({
+				xtype: 'button',
+				text: '查询',
+				ui: 'dark',
+				align: 'right',
+				scope: this,
+				handler: function() {
+					if (!this.searchWin) {
+						this.searchWin = this.getSearchForm().call(this, this);
+					}
+					if (!this.searchWin.getParent()) {
+						Ext.Viewport.add(this.searchWin);
+					}
+					this.searchWin.show();
+				}
+			});
+		}
 		if (title || tbar.length > 0) {
-			this.add( [{
+			this.add([{
 				xtype: 'titlebar',
 				title: title,
 				docked: 'top',
@@ -55,6 +74,7 @@ Ext.define("LCTY.default.DefaultList", {
 		scrollable: 'vertical',
 		emptyText: '<div class="notes-list-empty-text">未有可查阅的数据</div>',
 		defaultBackButtonText: "返回",
+		defaultSearchButtonText: '查询',
 		lastTitle: '',
 		useTitleForBackButtonText: false,
 		tbar: [],
@@ -78,6 +98,62 @@ Ext.define("LCTY.default.DefaultList", {
 		 * @type Boolean
 		 */
 		isHaveBack: false,
-		loadingText: "正在加载中,请稍后......"
+		/**
+		 * 列表查询按钮
+		 * 
+		 * @type Boolean
+		 */
+		isHaveSearch: true,
+		loadingText: "正在加载中,请稍后......",
+		/**
+		 * 查询按钮点击事件
+		 * 
+		 * @type Function
+		 */
+		searchForm: function(list) {
+			var searchItems = this.getSearchItems();
+			searchItems = searchItems || [];
+			var searchWin = Ext.create('LCTY.default.DefaultSearchForm', {
+				title: '查询设置',
+				items: [{
+					xtype: "fieldset",
+					items: searchItems
+				}],
+				listeners: {
+					hide: function(panel, eOpts) {
+						panel.defaultSearch(this);
+					},
+					scope: this
+				}
+			});
+			return searchWin;
+		},
+		/**
+		 * 查询窗口的items
+		 * 
+		 * @type Array
+		 */
+		searchItems: []
+	},
+	onBeforeLoad: function() {
+		var loadingText = this.getLoadingText();
+		// 增加默认loadingText
+		if (!loadingText) {
+			loadingText = '正在加载中,请稍后......';
+		}
+		if (this.isPainted()) {
+			this.setMasked({
+				xtype: 'loadmask',
+				message: loadingText
+			});
+		}
+		
+		this.hideEmptyText();
+	},
+	destroy: function() {
+		if (this.searchWin) {
+			this.searchWin.destroy();
+		}
+		this.callParent(arguments);
 	}
 });

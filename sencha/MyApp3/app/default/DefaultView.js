@@ -9,7 +9,7 @@ Ext.define("LCTY.default.DefaultView", {
 			tbar.push({
 				xtype: "button",
 				text: text,
-				ui: 'dark',
+				ui: 'back',
 				handler: function() {
 					this.up("navigationview").pop();
 				}

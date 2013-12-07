@@ -24,20 +24,32 @@ Ext.define("LCTY.view.index.DefectList", {
 			}
 		}],
 		isHaveBack: true,
-		tbar: [{
-			xtype: 'button',
-			text: '查询',
-			ui: 'dark',
-			align: 'right',
-			handler: function() {
-				console.log('searchCommand');
-				this.fireEvent('searchCommand');
-			}
+		searchItems: [{
+			xtype: 'textfield',
+			name: 'name',
+			label: 'Name'
+		}, {
+			xtype: 'textfield',
+			name: 'email',
+			label: 'Email'
+		}, {
+			xtype: 'textfield',
+			name: 'password',
+			label: 'Password'
 		}],
-		store: "DefectList"
+		store: "DefectList",
+		listeners: [{
+			delegate: "#searchBtn",
+			event: "tap",
+			fn: "onSearchBtnTap"
+		}]
 	},
 	onDefectListItemtap: function(list, index, target, record, e, eOpts) {
 		this.fireEvent('defectListCommand', this, record);
+	},
+	onSearchBtnTap: function() {
+		console.log('searchCommand');
+		this.fireEvent('searchCommand');
 	},
 	onShow: function() {
 		console.log(this.getLastTitle());
