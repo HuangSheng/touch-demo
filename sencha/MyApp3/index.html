@@ -2,6 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <!-- <meta name="apple-mobile-web-app-capable" content="yes" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Notes</title>
     <link rel="stylesheet" href="resources/css/style.css">
     <style type="text/css">
@@ -72,15 +74,6 @@
 		// 和服务器同步添加操作  
 		// alert("链接服务器");
 	}
-	window.onload = function() {
-		if(document.documentElement.scrollHeight <= document.documentElement.clientHeight) { 
-			bodyTag = document.getElementsByTagName('body')[0]; 
-			bodyTag.style.height = document.documentElement.clientWidth / screen.width * screen.height + 'px'; 
-		}
-		setTimeout(function() { 
-			window.scrollTo(0, 1); 
-		}, 0); 
-	};
 	</script>
 </head>
 <body>
