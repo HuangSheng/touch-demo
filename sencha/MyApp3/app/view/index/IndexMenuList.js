@@ -18,6 +18,7 @@ Ext.define("LCTY.view.index.IndexMenuList", {
 		'<b class="{icon}"></b>{resourceName}', // 
 		'</span>'],
 		isHavePage: false,
+		isHaveSearch: false,
 		tbar: [{
 			xtype: 'button',
 			itemId: 'logout',

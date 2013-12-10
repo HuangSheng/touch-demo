@@ -24,15 +24,18 @@ Ext.define("LCTY.view.index.DefectList", {
 			}
 		}],
 		isHaveBack: true,
-		tbar: [{
-			xtype: 'button',
-			text: '查询',
-			ui: 'dark',
-			align: 'right',
-			handler: function() {
-				console.log('searchCommand');
-				this.fireEvent('searchCommand');
-			}
+		searchItems: [{
+			xtype: 'textfield',
+			name: 'infoNo',
+			label: '设备编码'
+		}, {
+			xtype: 'textareafield',
+			name: 'infoDesc',
+			label: '设备描述'
+		}, {
+			xtype: 'textfield',
+			name: 'infoAddr',
+			label: '位置'
 		}],
 		store: "DefectList"
 	},

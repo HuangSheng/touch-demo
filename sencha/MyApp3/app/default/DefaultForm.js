@@ -9,7 +9,7 @@ Ext.define("LCTY.default.DefaultForm", {
 			tbar.push({
 				xtype: "button",
 				text: text,
-				ui: 'dark',
+				ui: 'back',
 				handler: function() {
 					this.up("navigationview").pop();
 				}
@@ -75,11 +75,7 @@ Ext.define("LCTY.default.DefaultForm", {
 		 *            response
 		 */
 		doSuccess: null,
-		scrollable: 'vertical',
-		masked: {
-			xtype: 'loadmask',
-			message: '正在加载中，请稍后......'
-		}
+		scrollable: 'vertical'
 	},
 	/**
 	 * 从服务器读取数据
@@ -106,7 +102,14 @@ Ext.define("LCTY.default.DefaultForm", {
 			me.setMasked(false);
 			console.log('链接服务器失败');
 		}
-		me.setMasked(true);
+		if (me.getMasked() == null) {
+			me.setMasked({
+				xtype: 'loadmask',
+				message: '正在加载中，请稍后......'
+			});
+		} else {
+			me.setMasked(true);
+		}
 		Ext.Ajax.request(option);
 	},
 	onShow: function() {
