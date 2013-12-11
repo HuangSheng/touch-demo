@@ -132,43 +132,54 @@ Ext.define("LCTY.default.DefaultList", {
 	 * 默认查询按钮动作
 	 */
 	defaultSearch: function(list) {
-		if (!this.searchForm) {
-			this.searchForm = Ext.Viewport.add({
+		var me = this, parent = me.up();
+		if (!me.searchForm) {
+			me.searchForm = parent.add({
 				xtype: 'defaultForm',
-				// isHaveBack: true,
+				isHaveBack: true,
 				title: '查询条件',
-				modal: true,
-				hideOnMaskTap: true,
 				scrollable: true,
-				showAnimation: {
-					type: 'popIn',
-					duration: 250,
-					easing: 'ease-out'
+				// modal: true,
+				// hideOnMaskTap: true,
+				// showAnimation: {
+				// type: 'popIn',
+				// duration: 250,
+				// easing: 'ease-out'
+				// },
+				// hideAnimation: {
+				// type: 'popOut',
+				// duration: 250,
+				// easing: 'ease-out'
+				// },
+				// centered: true,
+				// top: '10%',
+				// left: Ext.filterPlatform('ie10') ? 0 : '10%',
+				// right: Ext.filterPlatform('ie10') ? 0 : '10%',
+				// bottom: '10%',
+				// styleHtmlContent: true,
+				backHandler: function() {
+					parent.animateActiveItem(me, {
+						type: 'flip'
+					});
 				},
-				hideAnimation: {
-					type: 'popOut',
-					duration: 250,
-					easing: 'ease-out'
-				},
-				centered: true,
-				top: '10%',
-				left: Ext.filterPlatform('ie10') ? 0 : '10%',
-				right: Ext.filterPlatform('ie10') ? 0 : '10%',
-				bottom: '10%',
-				styleHtmlContent: true,
 				items: [{
 					xtype: "fieldset",
-					items: this.getSearchItems()
+					items: me.getSearchItems()
 				}],
 				listeners: {
 					hide: function() {
-						Ext.apply(list.getParams(), this.getValues());
-						list.load();
+						console.log('hide');
+						// Ext.apply(list.getParams(), this.getValues());
+						// list.load();
 					}
 				}
 			});
+			// this.searchForm = Ext.Viewport.add();
 		}
-		this.searchForm.show();
+		// this.searchForm.show();
+		parent.animateActiveItem(me.searchForm, {
+			type: 'flip'
+		});
 	},
 	destroy: function() {
 		if (this.searchForm) {
