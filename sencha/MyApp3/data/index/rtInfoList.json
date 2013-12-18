@@ -1,0 +1,24 @@
+{
+	"success": true,
+	"data": [{
+		"rtInfoId": "100011",
+		"rtInfoTitle": "励磁机电压",
+		"rtInfoValue": 288.6,
+		"valueUnit": "V",
+		"rtInfoDate": "2013-12-18 14:32:33"
+	}, {
+		"rtInfoId": "100012",
+		"rtInfoTitle": "发电机励磁A柜直流电压",
+		"rtInfoValue": 18.06,
+		"valueUnit": "V",
+		"rtInfoDate": "2013-12-18 14:32:33"
+	}, {
+		"rtInfoId": "100013",
+		"rtInfoTitle": "＃3机负荷",
+		"rtInfoValue": 385.84,
+		"valueUnit": "MW",
+		"rtInfoDate": "2013-12-18 14:32:33"
+	}],
+	"totalCount": 13,
+	"msg": null
+}

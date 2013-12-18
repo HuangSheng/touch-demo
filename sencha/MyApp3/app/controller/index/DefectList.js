@@ -21,6 +21,7 @@ Ext.define("LCTY.controller.index.DefectList", {
 		var view = Ext.create('LCTY.default.DefaultView', {
 			title: '缺陷数据',
 			isHaveBack: true,
+			backNum: 'defectList',
 			items: [{
 				xtype: 'defectView',
 				defectId: record.get("defectId"),

@@ -10,8 +10,9 @@ Ext.define("LCTY.default.DefaultView", {
 				xtype: "button",
 				text: text,
 				ui: 'back',
+				scope: this,
 				handler: function() {
-					this.up("navigationview").pop();
+					this.getBackFn().call(this, this);
 				}
 			});
 		}
@@ -38,6 +39,30 @@ Ext.define("LCTY.default.DefaultView", {
 		 * @type Boolean
 		 */
 		isHaveBack: false,
+		/**
+		 * 返回按钮动作
+		 * 
+		 * @type Function
+		 */
+		backFn: function(list) {
+			if (this.getBackNum() != null) {
+				this.up("navigationview").pop(this.getBackNum());
+			} else {
+				this.up("navigationview").pop();
+			}
+		},
+		/**
+		 * 返回按钮到第几页 <br>
+		 * <p>
+		 * If a Number, the number of views you want to pop. <br>
+		 * If a String, the pops to a matching component query. <br>
+		 * If an Object, the pops to a matching view instance.
+		 * </p>
+		 * 
+		 * @default null
+		 * @type Mixed
+		 */
+		backNum: null,
 		layout: {
 			type: 'fit'
 		}

@@ -2,7 +2,8 @@ Ext.define("LCTY.controller.index.RtList", {
 	extend: "Ext.app.Controller",
 	config: {
 		refs: {
-			rtList: "rtList"
+			rtList: "rtList",
+			indexMain: "indexMain"
 		},
 		control: {
 			rtList: {
@@ -11,6 +12,11 @@ Ext.define("LCTY.controller.index.RtList", {
 		}
 	},
 	onRtListCommand: function(list, record) {
-		console.log(record);
+		var view = Ext.create('LCTY.view.index.RtInfoList', {
+			params: {
+				id: record.get("rtId")
+			}
+		});
+		this.getIndexMain().push(view);
 	}
 });

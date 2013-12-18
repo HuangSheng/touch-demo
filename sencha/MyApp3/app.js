@@ -8,10 +8,10 @@ Ext.Loader.setPath({
 Ext.application({
 	
 	name: "LCTY",
-	controllers: ["index.IndexMenuList", "index.RtList", "index.DefectList"],
-	models: ["index.IndexMenuList", "index.RtList", "index.DefectList"],
-	stores: ["index.IndexMenuList", "index.RtList", "index.DefectList"],
-	views: ["Main", "index.IndexMain", "index.IndexMenuList", "index.RtList", "index.DefectList", "index.DefectView"],
+	controllers: ["index.IndexMenuList", "index.RtList", "index.DefectList", "index.RtInfoList"],
+	models: ["index.IndexMenuList", "index.RtList", "index.DefectList", "index.RtInfoList"],
+	stores: ["index.IndexMenuList", "index.RtList", "index.DefectList", "index.RtInfoList"],
+	views: ["Main", "index.IndexMain", "index.IndexMenuList", "index.RtList", "index.DefectList", "index.DefectView", "index.RtInfoList"],
 	// viewport: {
 	// autoMaximize: true
 	// },

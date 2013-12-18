@@ -720,6 +720,11 @@
                     "path": "touch/src/app/"
                 },
                 {
+                    "clsName": "LCTY.view.index.DefectView",
+                    "name": "DefectView.js",
+                    "path": "app/view/index/"
+                },
+                {
                     "clsName": "LCTY.controller.index.IndexMenuList",
                     "name": "IndexMenuList.js",
                     "path": "app/controller/index/"
@@ -727,11 +732,6 @@
                 {
                     "clsName": "LCTY.controller.index.RtList",
                     "name": "RtList.js",
-                    "path": "app/controller/index/"
-                },
-                {
-                    "clsName": "LCTY.controller.index.DefectList",
-                    "name": "DefectList.js",
                     "path": "app/controller/index/"
                 },
                 {
@@ -763,6 +763,11 @@
                     "clsName": "Ext.plugin.ListPaging",
                     "name": "ListPaging.js",
                     "path": "touch/src/plugin/"
+                },
+                {
+                    "clsName": "Ext.form.FieldSet",
+                    "name": "FieldSet.js",
+                    "path": "touch/src/form/"
                 },
                 {
                     "clsName": "Ext.data.ResultSet",
@@ -870,9 +875,24 @@
                     "path": "touch/src/dataview/component/"
                 },
                 {
+                    "clsName": "Ext.field.Input",
+                    "name": "Input.js",
+                    "path": "touch/src/field/"
+                },
+                {
+                    "clsName": "Ext.Decorator",
+                    "name": "Decorator.js",
+                    "path": "touch/src/"
+                },
+                {
                     "clsName": "Ext.data.Batch",
                     "name": "Batch.js",
                     "path": "touch/src/data/"
+                },
+                {
+                    "clsName": "Ext.util.LineSegment",
+                    "name": "LineSegment.js",
+                    "path": "touch/src/util/"
                 },
                 {
                     "clsName": "Ext.data.writer.Writer",
@@ -888,6 +908,11 @@
                     "clsName": "Ext.Video",
                     "name": "Video.js",
                     "path": "touch/src/"
+                },
+                {
+                    "clsName": "LCTY.default.DefaultView",
+                    "name": "DefaultView.js",
+                    "path": "app/default/"
                 },
                 {
                     "clsName": "Ext.util.Collection",
@@ -985,6 +1010,26 @@
                     "path": "touch/src/dataview/component/"
                 },
                 {
+                    "clsName": "Ext.field.TextAreaInput",
+                    "name": "TextAreaInput.js",
+                    "path": "touch/src/field/"
+                },
+                {
+                    "clsName": "Ext.field.Field",
+                    "name": "Field.js",
+                    "path": "touch/src/field/"
+                },
+                {
+                    "clsName": "Ext.field.Text",
+                    "name": "Text.js",
+                    "path": "touch/src/field/"
+                },
+                {
+                    "clsName": "Ext.field.TextArea",
+                    "name": "TextArea.js",
+                    "path": "touch/src/field/"
+                },
+                {
                     "clsName": "Ext.data.StoreManager",
                     "name": "StoreManager.js",
                     "path": "touch/src/data/"
@@ -1023,6 +1068,36 @@
                     "clsName": "LCTY.view.index.DefectList",
                     "name": "DefectList.js",
                     "path": "app/view/index/"
+                },
+                {
+                    "clsName": "Ext.Panel",
+                    "name": "Panel.js",
+                    "path": "touch/src/"
+                },
+                {
+                    "clsName": "Ext.field.Checkbox",
+                    "name": "Checkbox.js",
+                    "path": "touch/src/field/"
+                },
+                {
+                    "clsName": "Ext.form.Panel",
+                    "name": "Panel.js",
+                    "path": "touch/src/form/"
+                },
+                {
+                    "clsName": "LCTY.default.DefaultForm",
+                    "name": "DefaultForm.js",
+                    "path": "app/default/"
+                },
+                {
+                    "clsName": "LCTY.view.index.InfoView",
+                    "name": "InfoView.js",
+                    "path": "app/view/index/"
+                },
+                {
+                    "clsName": "LCTY.controller.index.DefectList",
+                    "name": "DefectList.js",
+                    "path": "app/controller/index/"
                 },
                 {
                     "clsName": "Ext.data.writer.Json",

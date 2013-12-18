@@ -31,8 +31,9 @@ Ext.define("LCTY.default.DefaultList", {
 				xtype: "button",
 				text: text,
 				ui: 'back',
+				scope: this,
 				handler: function() {
-					this.up("navigationview").pop();
+					this.getBackFn().call(this, this);
 				}
 			});
 		}
@@ -60,7 +61,7 @@ Ext.define("LCTY.default.DefaultList", {
 		}
 		
 		if (this.getIsAutoLoad()) {
-			this.getStore().load();
+			this.load({}, true);
 		}
 		this.callParent(arguments);
 	},
@@ -100,6 +101,30 @@ Ext.define("LCTY.default.DefaultList", {
 		 */
 		isHaveBack: false,
 		/**
+		 * 返回按钮动作
+		 * 
+		 * @type Function
+		 */
+		backFn: function(list) {
+			if (this.getBackNum() != null) {
+				this.up("navigationview").pop(this.getBackNum());
+			} else {
+				this.up("navigationview").pop();
+			}
+		},
+		/**
+		 * 返回按钮到第几页 <br>
+		 * <p>
+		 * If a Number, the number of views you want to pop. <br>
+		 * If a String, the pops to a matching component query. <br>
+		 * If an Object, the pops to a matching view instance.
+		 * </p>
+		 * 
+		 * @default null
+		 * @type Mixed
+		 */
+		backNum: null,
+		/**
 		 * 查询按钮
 		 * 
 		 * @type Boolean
@@ -120,21 +145,30 @@ Ext.define("LCTY.default.DefaultList", {
 			this.defaultSearch(list);
 		}
 	},
-	load: function() {
+	resetPage: function() {
+		this.getStore().currentPage = 1;
+	},
+	load: function(obj, isResetPage) {
 		var newParams = this.getParams(), store = this.getStore(), params = store.getProxy().getExtraParams();
 		Ext.apply(params, newParams);
 		if (!this.getLoadingText()) {
 			this.setLoadingText('正在加载中,请稍后......');
 		}
-		store.load();
+		if (isResetPage) {
+			this.resetPage();
+		}
+		store.load(obj);
 	},
 	/**
 	 * 默认查询按钮动作
 	 */
 	defaultSearch: function(list) {
 		var me = this, parent = me.up();
-		if (!me.searchForm) {
-			me.searchForm = parent.add({
+		if (!me.searchForm || !me.searchForm.element) {
+			parent.getLayout().setAnimation({
+				type: 'flip'
+			});
+			me.searchForm = parent.push({
 				xtype: 'defaultForm',
 				isHaveBack: true,
 				title: '查询条件',
@@ -160,6 +194,12 @@ Ext.define("LCTY.default.DefaultList", {
 				backHandler: function() {
 					parent.animateActiveItem(me, {
 						type: 'flip'
+					});
+					parent.getLayout().setAnimation({
+						duration: 300,
+						easing: 'ease-out',
+						type: 'slide',
+						direction: 'left'
 					});
 				},
 				items: [{
