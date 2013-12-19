@@ -770,6 +770,11 @@
                     "path": "touch/src/form/"
                 },
                 {
+                    "clsName": "Ext.ux.DelayedTask",
+                    "name": "DelayedTask.js",
+                    "path": "touch/src/ux/"
+                },
+                {
                     "clsName": "Ext.data.ResultSet",
                     "name": "ResultSet.js",
                     "path": "touch/src/data/"
@@ -955,6 +960,21 @@
                     "path": "app/view/index/"
                 },
                 {
+                    "clsName": "LCTY.default.Highstock",
+                    "name": "Highstock.js",
+                    "path": "app/default/"
+                },
+                {
+                    "clsName": "LCTY.view.index.RtChart",
+                    "name": "RtChart.js",
+                    "path": "app/view/index/"
+                },
+                {
+                    "clsName": "LCTY.controller.index.RtInfoList",
+                    "name": "RtInfoList.js",
+                    "path": "app/controller/index/"
+                },
+                {
                     "clsName": "Ext.data.reader.Json",
                     "name": "Json.js",
                     "path": "touch/src/data/reader/"
@@ -1070,6 +1090,11 @@
                     "path": "app/view/index/"
                 },
                 {
+                    "clsName": "LCTY.view.index.RtInfoList",
+                    "name": "RtInfoList.js",
+                    "path": "app/view/index/"
+                },
+                {
                     "clsName": "Ext.Panel",
                     "name": "Panel.js",
                     "path": "touch/src/"
@@ -1140,6 +1165,11 @@
                     "path": "app/model/index/"
                 },
                 {
+                    "clsName": "LCTY.model.index.RtInfoList",
+                    "name": "RtInfoList.js",
+                    "path": "app/model/index/"
+                },
+                {
                     "clsName": "Ext.data.proxy.Client",
                     "name": "Client.js",
                     "path": "touch/src/data/proxy/"
@@ -1172,6 +1202,11 @@
                 {
                     "clsName": "LCTY.store.index.DefectList",
                     "name": "DefectList.js",
+                    "path": "app/store/index/"
+                },
+                {
+                    "clsName": "LCTY.store.index.RtInfoList",
+                    "name": "RtInfoList.js",
                     "path": "app/store/index/"
                 },
                 {

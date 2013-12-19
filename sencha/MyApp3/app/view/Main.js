@@ -4,6 +4,7 @@ Ext.define('LCTY.view.Main', {
 	requires: ['Ext.TitleBar', 'Ext.Video'],
 	config: {
 		tabBarPosition: 'bottom',
+		ui: 'light',
 		items: [{
 			iconCls: 'home',
 			title: '生产信息',

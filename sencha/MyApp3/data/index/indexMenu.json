@@ -12,7 +12,7 @@
 		"resourceName": "生产日报",
 		"resourceDesc": "Daily Production Report",
 		"shortExtjsClass": "rtList",
-		"extjsClass": "LCTY.view.index.RtList",
+		"extjsClass": "LCTY.view.index.ProductLog",
 		"icon": "icon2"
 	}, {
 		"resourceId": "100013",

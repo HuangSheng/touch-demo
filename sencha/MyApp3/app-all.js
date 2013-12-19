@@ -28395,7 +28395,8 @@ Ext.define("LCTY.controller.index.RtList", {
 	extend: "Ext.app.Controller",
 	config: {
 		refs: {
-			rtList: "rtList"
+			rtList: "rtList",
+			indexMain: "indexMain"
 		},
 		control: {
 			rtList: {
@@ -28404,7 +28405,12 @@ Ext.define("LCTY.controller.index.RtList", {
 		}
 	},
 	onRtListCommand: function(list, record) {
-		console.log(record);
+		var view = Ext.create('LCTY.view.index.RtInfoList', {
+			params: {
+				id: record.get("rtId")
+			}
+		});
+		this.getIndexMain().push(view);
 	}
 });
 /**
@@ -30195,6 +30201,125 @@ Ext.define('Ext.form.FieldSet', {
         this.getItems().each(getFieldsFrom);
 
         return fields;
+    }
+});
+
+/**
+ * The DelayedTask class provides a convenient way to "buffer" the execution of a method,<br>
+ * performing `setTimeout` where a new timeout cancels the old timeout. When called, the<br>
+ * task will wait the specified time period before executing. If during that time period,<br>
+ * the task is called again, the original call will be canceled. This continues so that<br>
+ * the function is only called a single time for each iteration.
+ *
+ * This method is especially useful for things like detecting whether a user has finished<br>
+ * typing in a text field. An example would be performing validation on a keypress. You can<br>
+ * use this class to buffer the keypress events for a certain number of milliseconds, and<br>
+ * perform only if they stop for that amount of time.
+ *
+ * Using {@link Ext.ux.DelayedTask} is very simple:
+ *
+ *     //create the delayed task instance with our callback
+ *     var task = Ext.create('Ext.util.DelayedTask', {<br>
+ *          fn: function() {<br>
+ *             console.log('callback!');<br>
+ *          }<br>
+ *     });<br>
+ *
+ *     task.delay(1500); //the callback function will now be called after 1500ms<br>
+ *
+ *     task.cancel(); //the callback function will never be called now, unless we call delay() again<br>
+ *
+ * ## Example
+ *
+ *     @example
+ *     //create a textfield where we can listen to text
+ *     var field = Ext.create('Ext.field.Text', {
+ *         xtype: 'textfield',
+ *         label: 'Length: 0'
+ *     });
+ *
+ *     //add the textfield into a fieldset
+ *     Ext.Viewport.add({
+ *         xtype: 'formpanel',
+ *         items: [{
+ *             xtype: 'fieldset',
+ *             items: [field],
+ *             instructions: 'Type into the field and watch the count go up after 500ms.'
+ *         }]
+ *     });
+ *
+ *     //create our delayed task with a function that returns the fields length as the fields label
+ *     var task = Ext.create('Ext.util.DelayedTask', function() {
+ *         field.setLabel('Length: ' + field.getValue().length);
+ *     });
+ *
+ *     // Wait 500ms before calling our function. If the user presses another key
+ *     // during that 500ms, it will be canceled and we'll wait another 500ms.
+ *     field.on('keyup', function() {
+ *         task.delay(500);
+ *     });
+ *
+ * @constructor
+ * The parameters to this constructor serve as defaults and are not required.
+ * @param {Function} fn The default function to call.
+ * @param {Object} scope The default scope (The `this` reference) in which the function is called. If<br>
+ * not specified, `this` will refer to the browser window.
+ * @param {Array} args The default Array of arguments.
+ */
+Ext.define('Ext.ux.DelayedTask', {
+    config: {
+        interval: null,
+        delay: null,
+        fn: null,
+        scope: null,
+        args: null
+    },
+
+    constructor: function(fn, scope, args) {
+        var config = {
+            fn: fn,
+            scope: scope,
+            args: args
+        };
+
+        this.initConfig(config);
+    },
+
+    /**
+     * Cancels any pending timeout and queues a new one.
+     * @param {Number} delay The milliseconds to delay
+     * @param {Function} newFn Overrides the original function passed when instantiated.
+     * @param {Object} newScope Overrides the original `scope` passed when instantiated. Remember that if no scope<br>
+     * is specified, `this` will refer to the browser window.
+     * @param {Array} newArgs Overrides the original `args` passed when instantiated.
+     */
+    delay: function(delay, newFn, newScope, newArgs) {
+        var me = this;
+        //cancel any existing queued functions
+        me.cancel();
+        if (Ext.isNumber(delay)) {
+            me.setDelay(delay);
+        }
+        fn = newFn || me.getFn();
+        scope = newScope || me.getScope();
+        args = newArgs || me.getArgs();
+        
+        call = function() {
+            clearInterval(me.id);
+            me.id = null;
+            fn.apply(scope, args || []);
+        };
+        me.id = setInterval(call, me.getDelay());
+    },
+
+    /**
+     * Cancel the last queued timeout
+     */
+    cancel: function() {
+        if (this.id) {
+            clearInterval(this.id);
+            this.id = null;
+        }
     }
 });
 
@@ -40741,6 +40866,335 @@ Ext.define("LCTY.view.index.IndexMain", {
 		this.fireEvent('menuCommand', this, record);
 	}
 });
+Ext.define('LCTY.default.Highstock', {
+	
+	extend: 'Ext.Container',
+	requires: ["Ext.TitleBar"],
+	
+	initialize: function() {
+		this.on("show", this.onShow, this);
+		
+		var title = this.getTitle(), tbar = this.getTbar();
+		
+		if (this.getIsHaveBack()) {
+			var text = this.getUseTitleForBackButtonText() ? this.getLastTitle() : this.getDefaultBackButtonText();
+			tbar.push({
+				xtype: "button",
+				text: text,
+				ui: 'back',
+				scope: this,
+				handler: function() {
+					this.getBackFn().call(this, this);
+				}
+			});
+		}
+		if (title || tbar.length > 0) {
+			this.add([{
+				xtype: 'titlebar',
+				title: title,
+				docked: 'top',
+				ui: 'dark',
+				items: tbar
+			}]);
+		}
+		
+		this.callParent(arguments);
+	},
+	
+	config: {
+		/**
+		 * highstock配置
+		 * 
+		 * @default null
+		 * @type Object
+		 */
+		highstockConfig: null,
+		loadingText: "正在加载中,请稍后......",
+		defaultBackButtonText: "返回",
+		lastTitle: '',
+		useTitleForBackButtonText: false,
+		tbar: [],
+		title: null,
+		/**
+		 * 是否自动加载列表数据
+		 * 
+		 * @type Boolean
+		 */
+		isAutoLoad: true,
+		/**
+		 * 返回按钮,适用于navigationview
+		 * 
+		 * @type Boolean
+		 */
+		isHaveBack: false,
+		/**
+		 * 返回按钮动作
+		 * 
+		 * @type Function
+		 */
+		backFn: function(list) {
+			if (this.getBackNum() != null) {
+				this.up("navigationview").pop(this.getBackNum());
+			} else {
+				this.up("navigationview").pop();
+			}
+		},
+		/**
+		 * 加载数据的url
+		 * 
+		 * @type String
+		 */
+		url: null,
+		/**
+		 * 加载数据时的参数
+		 * 
+		 * @type
+		 */
+		params: {},
+		items: [{
+			xtype: "container",
+			itemId: "center",
+			top: '3%',
+			left: Ext.filterPlatform('ie10') ? 0 : '3%',
+			right: Ext.filterPlatform('ie10') ? 0 : '3%',
+			bottom: '3%'
+		}],
+		/**
+		 * 返回按钮到第几页 <br>
+		 * <p>
+		 * If a Number, the number of views you want to pop. <br>
+		 * If a String, the pops to a matching component query. <br>
+		 * If an Object, the pops to a matching view instance.
+		 * </p>
+		 * 
+		 * @default null
+		 * @type Mixed
+		 */
+		backNum: null,
+		style: {
+			"background": '#fff'
+		},
+		layout: {
+			type: 'fit'
+		}
+	},
+	// private
+	onShow: function() {
+		var me = this, center = me.down("#center"), id = center.id, el = Ext.fly(id), config;
+		if (el && el.getWidth() != 0 && !this.chart) {
+			// Create a new chart
+			config = me.getHighstockConfig();
+			if (config) {
+				config = Ext.clone(config);
+				Ext.apply(config, {
+					credits: {
+						enabled: false
+					}
+				});
+				if (config.chart) {
+					Ext.apply(config.chart, {
+						renderTo: id
+					});
+				} else {
+					config.chart = {
+						renderTo: id
+						// 指向的div的id属性
+					}
+				}
+				if (me.getUrl()) {
+					Ext.Ajax.request({
+						url: me.getUrl(),
+						params: me.getParams(),
+						success: function(response, opts) {
+							var json = Ext.decode(response.responseText);
+							for (var i = 0; i < config.series.length; i++) {
+								var serie = config.series[i], data = serie.data || [];
+								for (var j = 0; j < json.length; j++) {
+									data.push([parseFloat(json[j].tim), parseFloat(json[j].value)]);
+								}
+								serie.data = data;
+							}
+							me.series = config.series;
+							Highcharts.StockChart.getHighstockClass = function() {
+								return me;
+							};
+							me.chart = new Highcharts.StockChart(config);
+						}
+					});
+				} else {
+					me.series = config.series;
+					me.chart = new Highcharts.StockChart(config);
+				}
+			}
+		}
+	},
+	visible: function(visible, index, redraw) {
+		var series = this.chart.series;
+		if (series && series[index]) {
+			if (redraw === false) {
+				series[index].setVisible(visible, redraw);
+			} else {
+				series[index].setVisible(visible);
+			}
+			return true;
+		}
+		return false;
+	},
+	addSeries: function(options, redraw, animation) {
+		if (this.chart) {
+			this.chart.addSeries(options, redraw, animation);
+		}
+	},
+	redraw: function() {
+		if (this.chart) {
+			this.chart.redraw();
+		}
+	},
+	putData: function(dataArr) {
+		if (this.series) {}
+	}
+});
+Ext.define('LCTY.view.index.RtChart', {
+	
+	extend: 'LCTY.default.Highstock',
+	
+	requires: ["Ext.ux.DelayedTask"],
+	
+	initialize: function() {
+		this.getHighstockConfig().title = {
+			text: this.getRtInfoTitle()
+		}
+		this.callParent(arguments);
+	},
+	config: {
+		rtInfoTitle: '',
+		title: '曲线图',
+		isHaveBack: true,
+		url: 'data/index/highstock.json',
+		series: [{
+			name: "测点2",
+			type: 'spline'
+		}],
+		highstockConfig: {
+			chart: {
+				// zoomType: 'xy',
+				events: {
+					load: function() {
+						var series = this.series, cht = this, serie = series[0], me = Highcharts.StockChart.getHighstockClass();
+						if (!me.task) {
+							me.task = Ext.create('Ext.ux.DelayedTask', me.runningTask, me, [me.getParams(), cht, serie]);
+						}
+						me.task.delay(1000 * 10);
+					}
+				}
+			},
+			rangeSelector: {
+				buttons: [],
+				buttonTheme: {
+					width: 45
+				},
+				inputEnabled: false,
+				enabled: false,
+				inputDateFormat: '%Y-%m-%d',
+				selected: 0
+			},
+			series: [{
+				name: "测点",
+				type: 'spline'
+			}],
+			tooltip: {
+				formatter: function() {
+					var vDate = new Date(this.x);
+					var vDate1 = new Date(new Date(this.x).getTime());
+					var weekday = new Array(7);
+					weekday[0] = "星期日";
+					weekday[1] = "星期一";
+					weekday[2] = "星期二";
+					weekday[3] = "星期三";
+					weekday[4] = "星期四";
+					weekday[5] = "星期五";
+					weekday[6] = "星期六";
+					var s = '<span>' + weekday[vDate1.getDay()] + "," + Ext.Date.format(vDate1, "Y-m-d H:i") + '</span>';
+					Ext.each(this.points, function(point) {
+						s += '<br/><span style="color: ' + this.series.color + '">' + this.series.name + "</span>: <b>" + point.y + "</b>";
+					});
+					return s;
+				}
+			},
+			navigator: {
+				enabled: false
+			},
+			scrollbar: {
+				enabled: false
+			},
+			legend: {
+				enabled: false
+			},
+			exporting: {
+				enabled: false
+			},
+			xAxis: {
+				tickInterval: 1800 * 1000,
+				// endOnTick: true,
+				// startOnTick: true,
+				tickPixelInterval: 100,
+				labels: {
+					formatter: function() {
+						var vDate = new Date(this.value);
+						return Ext.util.Format.date(vDate, "H:i");
+					},
+					align: 'center'
+				}
+			}
+		},
+		listeners: {
+			destroy: function() {
+				if (this.task) {
+					this.task.cancel();
+				}
+			}
+		}
+	},
+	runningTask: function(params, cht, serie) {
+		var last = serie.options.data[serie.options.data.length - 1], totalDetails, values;
+		serie.addPoint([last[0] + 1000 * 60, Math.random() * (295 - 285) + 285], false);
+		// totalDetails = data.totalDetails[i];
+		// values = data.values[i + 1];
+		// for (var m = 0; m < totalDetails.length; m++) {
+		// if (totalDetails[m][0] >= last[0] + 1000 * 60) {
+		// serie.addPoint(totalDetails[m], false);
+		// }
+		// }
+		cht.redraw();
+		this.task.delay(this.task.getDelay());
+	}
+	
+});
+Ext.define("LCTY.controller.index.RtInfoList", {
+	extend: "Ext.app.Controller",
+	
+	requires: ['LCTY.view.index.RtChart'],
+	config: {
+		refs: {
+			rtInfoList: "rtInfoList",
+			indexMain: "indexMain"
+		},
+		control: {
+			rtInfoList: {
+				rtInfoListCommand: "onRtInfoListCommand"
+			}
+		}
+	},
+	onRtInfoListCommand: function(list, record) {
+		var view = Ext.create("LCTY.view.index.RtChart", {
+			params: {
+				rtInfoId: record.get("rtInfoId")
+			},
+			rtInfoTitle: record.get("rtInfoTitle")
+		});
+		this.getIndexMain().push(view);
+	}
+});
 /**
  * The JSON Reader is used by a Proxy to read a server response that is sent back in JSON format. This usually happens
  * as a result of loading a Store - for example we might create something like this:
@@ -48077,7 +48531,7 @@ Ext.define("LCTY.default.DefaultList", {
 		}
 		
 		if (this.getIsAutoLoad()) {
-			this.getStore().load();
+			this.load({}, true);
 		}
 		this.callParent(arguments);
 	},
@@ -48161,13 +48615,19 @@ Ext.define("LCTY.default.DefaultList", {
 			this.defaultSearch(list);
 		}
 	},
-	load: function() {
+	resetPage: function() {
+		this.getStore().currentPage = 1;
+	},
+	load: function(obj, isResetPage) {
 		var newParams = this.getParams(), store = this.getStore(), params = store.getProxy().getExtraParams();
 		Ext.apply(params, newParams);
 		if (!this.getLoadingText()) {
 			this.setLoadingText('正在加载中,请稍后......');
 		}
-		store.load();
+		if (isResetPage) {
+			this.resetPage();
+		}
+		store.load(obj);
 	},
 	/**
 	 * 默认查询按钮动作
@@ -48394,6 +48854,41 @@ Ext.define("LCTY.view.index.DefectList", {
 	},
 	onShow: function() {
 		console.log(this.getLastTitle());
+	}
+	
+});
+Ext.define("LCTY.view.index.RtInfoList", {
+	extend: "LCTY.default.DefaultList",
+	alias: "widget.rtInfoList",
+	initialize: function() {
+		this.on("itemtap", this.onRtInfoListItemtap, this);
+		this.callParent(arguments);
+	},
+	config: {
+		title: '实时数据列表',
+		itemHeight: 65,
+		grouped: false,
+		itemTpl: [// 子项样式
+		'<div class="list-item-title">{rtInfoTitle}</div>',// 标题栏样式
+		'<div class="list-item-narrative">',// 
+		'<span style="color: red;">{rtInfoValue} {valueUnit}</span>&nbsp;&nbsp;{[this.dateFmt(values.rtInfoDate)]}', // 值及日期样式
+		'</div>', //
+		{
+			dateFmt: function(rtInfoDate) {
+				// return Ext.Date.format(defectDate, "Y-m-d");
+				return rtInfoDate.toLocaleDateString();
+			}
+		}],
+		isHaveBack: true,
+		store: "RtInfoList",
+		searchItems: [{
+			xtype: 'textfield',
+			name: 'infoNo',
+			label: '日期'
+		}]
+	},
+	onRtInfoListItemtap: function(list, index, target, record, e, eOpts) {
+		this.fireEvent('rtInfoListCommand', this, record);
 	}
 	
 });
@@ -53317,6 +53812,29 @@ Ext.define("LCTY.model.index.DefectList", {
 		}]
 	}
 });
+Ext.define("LCTY.model.index.RtInfoList", {
+	extend: "Ext.data.Model",
+	config: {
+		idProperty: 'rtInfoId',
+		fields: [{
+			name: 'rtInfoId',
+			type: 'string'
+		}, {
+			name: 'rtInfoTitle',
+			type: 'string'
+		}, {
+			name: 'rtInfoValue',
+			type: 'double'
+		}, {
+			name: 'valueUnit',
+			type: 'string'
+		}, {
+			name: 'rtInfoDate',
+			type: 'date',
+			dateFormat: 'c'
+		}]
+	}
+});
 /**
  * @author Ed Spencer
  *
@@ -55939,6 +56457,15 @@ Ext.define("LCTY.store.index.DefectList", {
 	}
 	
 });
+Ext.define("LCTY.store.index.RtInfoList", {
+	extend: "LCTY.default.DefaultListStore",
+	
+	config: {
+		model: "LCTY.model.index.RtInfoList",
+		url: "data/index/rtInfoList.json"
+	}
+	
+});
 /**
  * @author Ed Spencer
  * @aside guide stores
@@ -56085,10 +56612,10 @@ Ext.define('Ext.data.reader.Array', {
 Ext.application({
 	
 	name: "LCTY",
-	controllers: ["index.IndexMenuList", "index.RtList", "index.DefectList"],
-	models: ["index.IndexMenuList", "index.RtList", "index.DefectList"],
-	stores: ["index.IndexMenuList", "index.RtList", "index.DefectList"],
-	views: ["Main", "index.IndexMain", "index.IndexMenuList", "index.RtList", "index.DefectList", "index.DefectView"],
+	controllers: ["index.IndexMenuList", "index.RtList", "index.DefectList", "index.RtInfoList"],
+	models: ["index.IndexMenuList", "index.RtList", "index.DefectList", "index.RtInfoList"],
+	stores: ["index.IndexMenuList", "index.RtList", "index.DefectList", "index.RtInfoList"],
+	views: ["Main", "index.IndexMain", "index.IndexMenuList", "index.RtList", "index.DefectList", "index.DefectView", "index.RtInfoList"],
 	// viewport: {
 	// autoMaximize: true
 	// },

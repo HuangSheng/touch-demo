@@ -11,7 +11,7 @@ Ext.application({
 	controllers: ["index.IndexMenuList", "index.RtList", "index.DefectList", "index.RtInfoList"],
 	models: ["index.IndexMenuList", "index.RtList", "index.DefectList", "index.RtInfoList"],
 	stores: ["index.IndexMenuList", "index.RtList", "index.DefectList", "index.RtInfoList"],
-	views: ["Main", "index.IndexMain", "index.IndexMenuList", "index.RtList", "index.DefectList", "index.DefectView", "index.RtInfoList"],
+	views: ["Main", "index.IndexMain", "index.IndexMenuList", "index.RtList", "index.DefectList", "index.DefectView", "index.RtInfoList", "index.ProductLog"],
 	// viewport: {
 	// autoMaximize: true
 	// },

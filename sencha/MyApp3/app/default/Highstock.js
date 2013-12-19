@@ -2,9 +2,6 @@ Ext.define('LCTY.default.Highstock', {
 	
 	extend: 'Ext.Container',
 	requires: ["Ext.TitleBar"],
-	style: {
-		"background": '#fff'
-	},
 	
 	initialize: function() {
 		this.on("show", this.onShow, this);
@@ -32,6 +29,7 @@ Ext.define('LCTY.default.Highstock', {
 				items: tbar
 			}]);
 		}
+		
 		this.callParent(arguments);
 	},
 	
@@ -105,18 +103,21 @@ Ext.define('LCTY.default.Highstock', {
 		 * @type Mixed
 		 */
 		backNum: null,
+		style: {
+			"background": '#fff'
+		},
 		layout: {
 			type: 'fit'
 		}
 	},
 	// private
 	onShow: function() {
-		var me = this, el, config, id = me.down("#center").id;
-		el = Ext.fly(id);
+		var me = this, center = me.down("#center"), id = center.id, el = Ext.fly(id), config;
 		if (el && el.getWidth() != 0 && !this.chart) {
 			// Create a new chart
 			config = me.getHighstockConfig();
 			if (config) {
+				config = Ext.clone(config);
 				Ext.apply(config, {
 					credits: {
 						enabled: false
@@ -132,27 +133,30 @@ Ext.define('LCTY.default.Highstock', {
 						// 指向的div的id属性
 					}
 				}
-			}
-			if (this.getUrl()) {
-				Ext.Ajax.request({
-					url: this.getUrl(),
-					params: this.getParams(),
-					success: function(response, opts) {
-						var json = Ext.decode(response.responseText);
-						for (var i = 0; i < config.series.length; i++) {
-							var serie = config.series[i], data = serie.data || [];
-							for (var j = 0; j < json.length; j++) {
-								data.push([parseFloat(json[j].tim), parseFloat(json[j].value)]);
+				if (me.getUrl()) {
+					Ext.Ajax.request({
+						url: me.getUrl(),
+						params: me.getParams(),
+						success: function(response, opts) {
+							var json = Ext.decode(response.responseText);
+							for (var i = 0; i < config.series.length; i++) {
+								var serie = config.series[i], data = serie.data || [];
+								for (var j = 0; j < json.length; j++) {
+									data.push([parseFloat(json[j].tim), parseFloat(json[j].value)]);
+								}
+								serie.data = data;
 							}
-							serie.data = data;
+							me.series = config.series;
+							Highcharts.StockChart.getHighstockClass = function() {
+								return me;
+							};
+							me.chart = new Highcharts.StockChart(config);
 						}
-						this.series = config.series;
-						this.chart = new Highcharts.StockChart(config);
-					}
-				});
-			} else {
-				this.series = config.series;
-				this.chart = new Highcharts.StockChart(config);
+					});
+				} else {
+					me.series = config.series;
+					me.chart = new Highcharts.StockChart(config);
+				}
 			}
 		}
 	},
