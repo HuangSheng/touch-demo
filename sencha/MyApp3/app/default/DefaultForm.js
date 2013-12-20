@@ -5,14 +5,13 @@ Ext.define("LCTY.default.DefaultForm", {
 	initialize: function() {
 		var title = this.getTitle(), tbar = this.getTbar();
 		if (this.getIsHaveBack()) {
-			var text = this.getUseTitleForBackButtonText() ? this.getLastTitle() : this.getDefaultBackButtonText(),
 			// 返回按钮点击事件
-			handler = Ext.Function.bind(this.getBackHandler() || function() {
+			var handler = Ext.Function.bind(this.getBackHandler() || function() {
 				this.up("navigationview").pop();
 			}, this.scope || this || Ext.global);
 			tbar.push({
 				xtype: "button",
-				text: text,
+				text: this.getBackButtonText(),
 				ui: 'back',
 				scope: this,
 				handler: handler
@@ -42,7 +41,7 @@ Ext.define("LCTY.default.DefaultForm", {
 	config: {
 		tbar: [],
 		title: null,
-		lastTitle: '',
+		view: null,
 		useTitleForBackButtonText: false,
 		defaultBackButtonText: "返回",
 		/**
@@ -130,5 +129,14 @@ Ext.define("LCTY.default.DefaultForm", {
 				success: me.getDoSuccess()
 			});
 		}
+	},
+	getBackButtonText: function() {
+		var nBar = this.getView() ? this.getView().getNavigationBar() : null, text = nBar ? nBar.backButtonStack[nBar.backButtonStack.length - 1] : '', useTitle = this.getUseTitleForBackButtonText();
+		if (!useTitle) {
+			if (text) {
+				text = this.getDefaultBackButtonText();
+			}
+		}
+		return text;
 	}
 });

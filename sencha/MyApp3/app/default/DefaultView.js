@@ -5,10 +5,9 @@ Ext.define("LCTY.default.DefaultView", {
 	initialize: function() {
 		var title = this.getTitle(), tbar = this.getTbar();
 		if (this.getIsHaveBack()) {
-			var text = this.getUseTitleForBackButtonText() ? this.getLastTitle() : this.getDefaultBackButtonText();
 			tbar.push({
 				xtype: "button",
-				text: text,
+				text: this.getBackButtonText(),
 				ui: 'back',
 				scope: this,
 				handler: function() {
@@ -30,6 +29,13 @@ Ext.define("LCTY.default.DefaultView", {
 			});
 		}
 		if (title || tbar.length > 0) {
+			Ext.create('Ext.navigation.Bar', {
+				title: title,
+				docked: 'top',
+				ui: 'dark',
+				view: '',
+				items: tbar
+			});
 			this.add([{
 				xtype: 'titlebar',
 				title: title,
@@ -43,6 +49,7 @@ Ext.define("LCTY.default.DefaultView", {
 	config: {
 		tbar: [],
 		title: null,
+		view: null,
 		lastTitle: '',
 		useTitleForBackButtonText: false,
 		defaultBackButtonText: "返回",
@@ -105,7 +112,7 @@ Ext.define("LCTY.default.DefaultView", {
 	/**
 	 * 默认查询按钮动作
 	 */
-	defaultSearch: function(list) {
+	defaultSearch: function(view) {
 		var me = this, parent = me.up();
 		if (!me.searchForm || !me.searchForm.element) {
 			parent.getLayout().setAnimation({
@@ -115,6 +122,7 @@ Ext.define("LCTY.default.DefaultView", {
 				xtype: 'defaultForm',
 				isHaveBack: true,
 				title: '查询条件',
+				view: parent,
 				scrollable: true,
 				// modal: true,
 				// hideOnMaskTap: true,
@@ -169,5 +177,14 @@ Ext.define("LCTY.default.DefaultView", {
 			this.searchForm.destroy();
 		}
 		this.callParent(arguments);
+	},
+	getBackButtonText: function() {
+		var nBar = this.getView() ? this.getView().getNavigationBar() : null, text = nBar ? nBar.backButtonStack[nBar.backButtonStack.length - 1] : '', useTitle = this.getUseTitleForBackButtonText();
+		if (!useTitle) {
+			if (text) {
+				text = this.getDefaultBackButtonText();
+			}
+		}
+		return text;
 	}
 });

@@ -17,24 +17,13 @@ Ext.define("LCTY.view.index.IndexMain", {
 				}
 			}
 		};
-		this.add( [indexMenuList]);
-		this.on("pop", this.onPop, this);
-		this.addBeforeListener("push", this.onBeforePush, this);
+		this.add([indexMenuList]);
 	},
 	config: {
 		useTitleForBackButtonText: true,
 		navigationBar: false
 	},
-	onBeforePush: function(indexMain, view, eOpts) {
-		console.log(indexMain.title);
-	},
-	onPop: function(indexMain, view, eOpts) {
-		var navigationBar = this.getNavigationBar();
-		// navigationBar.removeAt(navigationBar.getItems().length - 1);
-		// console.log(navigationBar.getItems().length);
-	},
 	onIndexMenuListItemtap: function(list, index, target, record, e, eOpts) {
-		// console.log("editNoteCommand");
 		this.fireEvent('menuCommand', this, record);
 	}
 });

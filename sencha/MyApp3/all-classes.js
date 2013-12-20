@@ -28378,7 +28378,9 @@ Ext.define("LCTY.controller.index.IndexMenuList", {
 		}
 	},
 	onMenuCommand: function(indexMain, record) {
-		var view = Ext.create(record.get("extjsClass"));
+		var view = Ext.create(record.get("extjsClass"), {
+			view: indexMain
+		});
 		indexMain.push(view);
 	},
 	// init and launch functions omitted.
@@ -28406,6 +28408,7 @@ Ext.define("LCTY.controller.index.RtList", {
 	},
 	onRtListCommand: function(list, record) {
 		var view = Ext.create('LCTY.view.index.RtInfoList', {
+			view: this.getIndexMain(),
 			params: {
 				id: record.get("rtId")
 			}
@@ -29330,354 +29333,6 @@ Ext.define('Ext.Spacer', {
 });
 
 /**
- * Provides a base class for audio/visual controls. Should not be used directly.
- *
- * Please see the {@link Ext.Audio} and {@link Ext.Video} classes for more information.
- * @private
- */
-Ext.define('Ext.Media', {
-    extend: 'Ext.Component',
-    xtype: 'media',
-
-    /**
-     * @event play
-     * Fires whenever the media is played.
-     * @param {Ext.Media} this
-     */
-
-    /**
-     * @event pause
-     * Fires whenever the media is paused.
-     * @param {Ext.Media} this
-     * @param {Number} time The time at which the media was paused at in seconds.
-     */
-
-    /**
-     * @event ended
-     * Fires whenever the media playback has ended.
-     * @param {Ext.Media} this
-     * @param {Number} time The time at which the media ended at in seconds.
-     */
-
-    /**
-     * @event stop
-     * Fires whenever the media is stopped.
-     * The `pause` event will also fire after the `stop` event if the media is currently playing.
-     * The `timeupdate` event will also fire after the `stop` event regardless of playing status.
-     * @param {Ext.Media} this
-     */
-
-    /**
-     * @event volumechange
-     * Fires whenever the volume is changed.
-     * @param {Ext.Media} this
-     * @param {Number} volume The volume level from 0 to 1.
-     */
-
-    /**
-     * @event mutedchange
-     * Fires whenever the muted status is changed.
-     * The volumechange event will also fire after the `mutedchange` event fires.
-     * @param {Ext.Media} this
-     * @param {Boolean} muted The muted status.
-     */
-
-    /**
-     * @event timeupdate
-     * Fires when the media is playing every 15 to 250ms.
-     * @param {Ext.Media} this
-     * @param {Number} time The current time in seconds.
-     */
-
-    config: {
-        /**
-         * @cfg {String} url
-         * Location of the media to play.
-         * @accessor
-         */
-        url: '',
-
-        /**
-         * @cfg {Boolean} enableControls
-         * Set this to `false` to turn off the native media controls.
-         * Defaults to `false` when you are on Android, as it doesn't support controls.
-         * @accessor
-         */
-        enableControls: Ext.os.is.Android ? false : true,
-
-        /**
-         * @cfg {Boolean} autoResume
-         * Will automatically start playing the media when the container is activated.
-         * @accessor
-         */
-        autoResume: false,
-
-        /**
-         * @cfg {Boolean} autoPause
-         * Will automatically pause the media when the container is deactivated.
-         * @accessor
-         */
-        autoPause: true,
-
-        /**
-         * @cfg {Boolean} preload
-         * Will begin preloading the media immediately.
-         * @accessor
-         */
-        preload: true,
-
-        /**
-         * @cfg {Boolean} loop
-         * Will loop the media forever.
-         * @accessor
-         */
-        loop: false,
-
-        /**
-         * @cfg {Ext.Element} media
-         * A reference to the underlying audio/video element.
-         * @accessor
-         */
-        media: null,
-
-        /**
-         * @cfg {Number} volume
-         * The volume of the media from 0.0 to 1.0.
-         * @accessor
-         */
-        volume: 1,
-
-        /**
-         * @cfg {Boolean} muted
-         * Whether or not the media is muted. This will also set the volume to zero.
-         * @accessor
-         */
-        muted: false
-    },
-
-    constructor: function() {
-        this.mediaEvents = {};
-        this.callSuper(arguments);
-    },
-
-    initialize: function() {
-        var me = this;
-        me.callParent();
-
-        me.on({
-            scope: me,
-
-            activate  : me.onActivate,
-            deactivate: me.onDeactivate
-        });
-
-        me.addMediaListener({
-            canplay: 'onCanPlay',
-            play: 'onPlay',
-            pause: 'onPause',
-            ended: 'onEnd',
-            volumechange: 'onVolumeChange',
-            timeupdate: 'onTimeUpdate'
-        });
-    },
-
-    addMediaListener: function(event, fn) {
-        var me = this,
-            dom = me.media.dom,
-            bind = Ext.Function.bind;
-
-        Ext.Object.each(event, function(e, fn) {
-            fn = bind(me[fn], me);
-            me.mediaEvents[e] = fn;
-            dom.addEventListener(e, fn);
-        });
-    },
-
-    onPlay: function() {
-        this.fireEvent('play', this);
-    },
-
-    onCanPlay: function() {
-        this.fireEvent('canplay', this);
-    },
-
-    onPause: function() {
-        this.fireEvent('pause', this, this.getCurrentTime());
-    },
-
-    onEnd: function() {
-        this.fireEvent('ended', this, this.getCurrentTime());
-    },
-
-    onVolumeChange: function() {
-        this.fireEvent('volumechange', this, this.media.dom.volume);
-    },
-
-    onTimeUpdate: function() {
-        this.fireEvent('timeupdate', this, this.getCurrentTime());
-    },
-
-    /**
-     * Returns if the media is currently playing.
-     * @return {Boolean} playing `true` if the media is playing.
-     */
-    isPlaying: function() {
-        return !Boolean(this.media.dom.paused);
-    },
-
-    // @private
-    onActivate: function() {
-        var me = this;
-
-        if (me.getAutoResume() && !me.isPlaying()) {
-            me.play();
-        }
-    },
-
-    // @private
-    onDeactivate: function() {
-        var me = this;
-
-        if (me.getAutoPause() && me.isPlaying()) {
-            me.pause();
-        }
-    },
-
-    /**
-     * Sets the URL of the media element. If the media element already exists, it is update the src attribute of the
-     * element. If it is currently playing, it will start the new video.
-     */
-    updateUrl: function(newUrl) {
-        var dom = this.media.dom;
-
-        //when changing the src, we must call load:
-        //http://developer.apple.com/library/safari/#documentation/AudioVideo/Conceptual/Using_HTML5_Audio_Video/ControllingMediaWithJavaScript/ControllingMediaWithJavaScript.html
-
-        dom.src = newUrl;
-
-        if ('load' in dom) {
-            dom.load();
-        }
-
-        if (this.isPlaying()) {
-            this.play();
-        }
-    },
-
-    /**
-     * Updates the controls of the video element.
-     */
-    updateEnableControls: function(enableControls) {
-        this.media.dom.controls = enableControls ? 'controls' : false;
-    },
-
-    /**
-     * Updates the loop setting of the media element.
-     */
-    updateLoop: function(loop) {
-        this.media.dom.loop = loop ? 'loop' : false;
-    },
-
-    /**
-     * Starts or resumes media playback.
-     */
-    play: function() {
-        var dom = this.media.dom;
-
-        if ('play' in dom) {
-            dom.play();
-            setTimeout(function() {
-                dom.play();
-            }, 10);
-        }
-    },
-
-    /**
-     * Pauses media playback.
-     */
-    pause: function() {
-        var dom = this.media.dom;
-
-        if ('pause' in dom) {
-            dom.pause();
-        }
-    },
-
-    /**
-     * Toggles the media playback state.
-     */
-    toggle: function() {
-        if (this.isPlaying()) {
-            this.pause();
-        } else {
-            this.play();
-        }
-    },
-
-    /**
-     * Stops media playback and returns to the beginning.
-     */
-    stop: function() {
-        var me = this;
-
-        me.setCurrentTime(0);
-        me.fireEvent('stop', me);
-        me.pause();
-    },
-
-    //@private
-    updateVolume: function(volume) {
-        this.media.dom.volume = volume;
-    },
-
-    //@private
-    updateMuted: function(muted) {
-        this.fireEvent('mutedchange', this, muted);
-
-        this.media.dom.muted = muted;
-    },
-
-    /**
-     * Returns the current time of the media, in seconds.
-     * @return {Number}
-     */
-    getCurrentTime: function() {
-        return this.media.dom.currentTime;
-    },
-
-    /*
-     * Set the current time of the media.
-     * @param {Number} time The time, in seconds.
-     * @return {Number}
-     */
-    setCurrentTime: function(time) {
-        this.media.dom.currentTime = time;
-
-        return time;
-    },
-
-    /**
-     * Returns the duration of the media, in seconds.
-     * @return {Number}
-     */
-    getDuration: function() {
-        return this.media.dom.duration;
-    },
-
-    destroy: function() {
-        var me = this,
-            dom  = me.media.dom,
-            mediaEvents = me.mediaEvents;
-
-        Ext.Object.each(mediaEvents, function(event, fn) {
-            dom.removeEventListener(event, fn);
-        });
-
-        this.callSuper();
-    }
-});
-
-/**
  * Adds a Load More button at the bottom of the list. When the user presses this button,
  * the next page of data will be loaded into the store and appended to the List.
  *
@@ -30006,6 +29661,446 @@ Ext.define('Ext.plugin.ListPaging', {
 });
 
 /**
+ * This plugin adds pull to refresh functionality to the List.
+ *
+ * ## Example
+ *
+ *     @example
+ *     var store = Ext.create('Ext.data.Store', {
+ *         fields: ['name', 'img', 'text'],
+ *         data: [
+ *             {
+ *                 name: 'rdougan',
+ *                 img: 'http://a0.twimg.com/profile_images/1261180556/171265_10150129602722922_727937921_7778997_8387690_o_reasonably_small.jpg',
+ *                 text: 'JavaScript development'
+ *             }
+ *         ]
+ *     });
+ *
+ *     Ext.create('Ext.dataview.List', {
+ *         fullscreen: true,
+ *
+ *         store: store,
+ *
+ *         plugins: [
+ *             {
+ *                 xclass: 'Ext.plugin.PullRefresh',
+ *                 pullRefreshText: 'Pull down for more new Tweets!'
+ *             }
+ *         ],
+ *
+ *         itemTpl: [
+ *             '<img src="{img}" alt="{name} photo" />',
+ *             '<div class="tweet"><b>{name}:</b> {text}</div>'
+ *         ]
+ *     });
+ */
+Ext.define('Ext.plugin.PullRefresh', {
+    extend: 'Ext.Component',
+    alias: 'plugin.pullrefresh',
+    requires: ['Ext.DateExtras'],
+
+    config: {
+        /**
+         * @cfg {Ext.dataview.List} list
+         * The list to which this PullRefresh plugin is connected.
+         * This will usually by set automatically when configuring the list with this plugin.
+         * @accessor
+         */
+        list: null,
+
+        /**
+         * @cfg {String} pullRefreshText The text that will be shown while you are pulling down.
+         * @accessor
+         */
+        pullRefreshText: 'Pull down to refresh...',
+
+        /**
+         * @cfg {String} releaseRefreshText The text that will be shown after you have pulled down enough to show the release message.
+         * @accessor
+         */
+        releaseRefreshText: 'Release to refresh...',
+
+        /**
+         * @cfg {String} lastUpdatedText The text to be shown in front of the last updated time.
+         * @accessor
+         */
+        lastUpdatedText: 'Last Updated:',
+
+        /**
+         * @cfg {String} lastUpdatedDateFormat The format to be used on the last updated date.
+         */
+        lastUpdatedDateFormat: 'm/d/Y h:iA',
+
+        /**
+         * @cfg {String} loadingText The text that will be shown while the list is refreshing.
+         * @accessor
+         */
+        loadingText: 'Loading...',
+
+        /**
+         * @cfg {String} loadedText The text that will be when data has been loaded.
+         * @accessor
+         */
+        loadedText: 'Loaded.',
+
+        /**
+         * @cfg {Boolean} autoSnapBack Determines whether the pulldown should automatically snap back after data has been loaded.
+         * If false call {@link #snapBack}() to manually snap the pulldown back.
+         */
+        autoSnapBack: true,
+        /**
+         * @cfg {Number} snappingAnimationDuration The duration for snapping back animation after the data has been refreshed
+         * @accessor
+         */
+        snappingAnimationDuration: 300,
+
+        /**
+         * @cfg {Number} overpullSnapBackDuration The duration for snapping back when pulldown has been lowered further then its height.
+         */
+        overpullSnapBackDuration: 300,
+
+        /**
+         * @cfg {Ext.XTemplate/String/Array} pullTpl The template being used for the pull to refresh markup.
+         * @accessor
+         */
+        pullTpl: [
+            '<div class="x-list-pullrefresh">',
+                '<div class="x-list-pullrefresh-arrow"></div>',
+                '<div class="x-loading-spinner">',
+                    '<span class="x-loading-top"></span>',
+                    '<span class="x-loading-right"></span>',
+                    '<span class="x-loading-bottom"></span>',
+                    '<span class="x-loading-left"></span>',
+                '</div>',
+                '<div class="x-list-pullrefresh-wrap">',
+                    '<h3 class="x-list-pullrefresh-message"></h3>',
+                    '<div class="x-list-pullrefresh-updated"></div>',
+                '</div>',
+            '</div>'
+        ].join(''),
+
+        translatable: true
+    },
+
+    /**
+     * @event latestfetched
+     * Fires when the latest data has been fetched
+     */
+
+    isRefreshing: false,
+    currentViewState: '',
+
+    initialize: function() {
+        this.callParent();
+
+        this.on({
+            painted: 'onPainted',
+            scope: this
+        });
+    },
+
+    init: function(list) {
+        var me = this;
+
+        me.setList(list);
+        me.initScrollable();
+    },
+
+    initScrollable: function() {
+        var me = this,
+            list = me.getList(),
+            store = list.getStore(),
+            pullTpl = me.getPullTpl(),
+            element = me.element,
+            scrollable = list.getScrollable(),
+            scroller;
+
+        if (!scrollable) {
+            return;
+        }
+
+        scroller = scrollable.getScroller();
+        scroller.setAutoRefresh(false);
+
+        me.lastUpdated = new Date();
+
+        list.insert(0, me);
+
+        // We provide our own load mask so if the Store is autoLoading already disable the List's mask straight away,
+        // otherwise if the Store loads later allow the mask to show once then remove it thereafter
+        if (store) {
+            if (store.isAutoLoading()) {
+                list.setLoadingText(null);
+            } else {
+                store.on({
+                    load: {
+                        single: true,
+                        fn: function() {
+                            list.setLoadingText(null);
+                        }
+                    }
+                });
+            }
+        }
+
+        pullTpl.overwrite(element, []);
+
+        me.loadingElement = element.getFirstChild();
+        me.messageEl = element.down('.x-list-pullrefresh-message');
+        me.updatedEl = element.down('.x-list-pullrefresh-updated');
+
+        me.maxScroller = scroller.getMaxPosition();
+
+        scroller.on({
+            maxpositionchange: me.setMaxScroller,
+            scroll: me.onScrollChange,
+            scope: me
+        });
+
+        me.resetRefreshState();
+    },
+
+    onScrollableChange: function() {
+        this.initScrollable();
+    },
+
+    updateList: function(newList, oldList) {
+        var me = this;
+
+        if (newList && newList != oldList) {
+            newList.on({
+                order: 'after',
+                scrollablechange: me.onScrollableChange,
+                scope: me
+            });
+        } else if (oldList) {
+            oldList.un({
+                order: 'after',
+                scrollablechange: me.onScrollableChange,
+                scope: me
+            });
+        }
+    },
+
+    /**
+     * @private
+     * Attempts to load the newest posts via the attached List's Store's Proxy
+     */
+    fetchLatest: function() {
+        var store = this.getList().getStore(),
+            proxy = store.getProxy(),
+            operation;
+
+        operation = Ext.create('Ext.data.Operation', {
+            page: 1,
+            start: 0,
+            model: store.getModel(),
+            limit: store.getPageSize(),
+            action: 'read',
+            sorters: store.getSorters(),
+            filters: store.getRemoteFilter() ? store.getFilters() : []
+        });
+
+        proxy.read(operation, this.onLatestFetched, this);
+    },
+
+    /**
+     * @private
+     * Called after fetchLatest has finished grabbing data. Matches any returned records against what is already in the
+     * Store. If there is an overlap, updates the existing records with the new data and inserts the new items at the
+     * front of the Store. If there is no overlap, insert the new records anyway and record that there's a break in the
+     * timeline between the new and the old records.
+     */
+    onLatestFetched: function(operation) {
+        var store      = this.getList().getStore(),
+            list       = this.getList(),
+            scroller   = list.getScrollable().getScroller(),
+            scrollerOffsetX = scroller.position.x,
+            scrollerOffsetY = scroller.position.y,
+            oldRecords = store.getData(),
+            newRecords = operation.getRecords(),
+            length     = newRecords.length,
+            toInsert   = [],
+            newRecord, oldRecord, i;
+
+        for (i = 0; i < length; i++) {
+            newRecord = newRecords[i];
+            oldRecord = oldRecords.getByKey(newRecord.getId());
+
+            if (oldRecord) {
+                oldRecord.set(newRecord.getData());
+            } else {
+                toInsert.push(newRecord);
+            }
+
+            oldRecord = undefined;
+        }
+
+        store.insert(0, toInsert);
+        scroller.scrollTo(scrollerOffsetX, scrollerOffsetY);
+
+        this.setViewState('loaded');
+        this.fireEvent('latestfetched');
+        if (this.getAutoSnapBack()) {
+            this.snapBack();
+        }
+    },
+
+    snapBack: function() {
+        var me = this,
+            list = me.getList(),
+            scroller = list.getScrollable().getScroller();
+
+        scroller.on({
+            scrollend: function() {
+                this.resetRefreshState();
+            },
+            single: true,
+            scope: me
+        });
+
+        if (scroller.position.y < 0) {
+            scroller.minPosition.y = 0;
+            scroller.scrollTo(null, 0, {duration: scroller.isTouching ? 0 : me.getSnappingAnimationDuration()});
+        }
+    },
+
+    onPainted: function() {
+        this.pullHeight = this.loadingElement.getHeight();
+    },
+
+    setMaxScroller: function(scroller, position) {
+        this.maxScroller = position;
+    },
+
+    onScrollChange: function(scroller, x, y) {
+        if (y <= 0) {
+            this.onBounceTop(y);
+        }
+        if (y > this.maxScroller.y) {
+            this.onBounceBottom(y);
+        }
+    },
+
+    /**
+     * @private
+     */
+    applyPullTpl: function(config) {
+        return (Ext.isObject(config) && config.isTemplate) ? config : new Ext.XTemplate(config);
+    },
+
+    onBounceTop: function(y) {
+        var me = this,
+            pullHeight = me.pullHeight,
+            list = me.getList(),
+            scroller = list.getScrollable().getScroller();
+
+        if (!me.isReleased) {
+            if (!pullHeight) {
+                me.onPainted();
+                pullHeight = me.pullHeight;
+            }
+            if (!me.isRefreshing && -y >= pullHeight + 10) {
+                me.isRefreshing = true;
+
+                me.setViewState('release');
+
+                scroller.getContainer().onBefore({
+                    dragend: 'onScrollerDragEnd',
+                    single: true,
+                    scope: me
+                });
+            }
+            else if (me.isRefreshing && -y < pullHeight + 10) {
+                me.isRefreshing = false;
+                me.setViewState('pull');
+            }
+        }
+
+        me.getTranslatable().translate(0, -y);
+    },
+
+    onScrollerDragEnd: function() {
+        var me = this;
+
+        if (me.isRefreshing) {
+            var list = me.getList(),
+                scroller = list.getScrollable().getScroller(),
+                translateable = scroller.getTranslatable();
+
+            translateable.setEasingY({duration:this.getOverpullSnapBackDuration()});
+            scroller.minPosition.y = -me.pullHeight;
+            scroller.on({
+                scrollend: 'loadStore',
+                single: true,
+                scope: me
+            });
+
+            me.isReleased = true;
+        }
+    },
+
+    loadStore: function() {
+        var me = this;
+
+        me.setViewState('loading');
+        me.isReleased = false;
+        me.fetchLatest();
+    },
+
+    onBounceBottom: Ext.emptyFn,
+
+    setViewState: function(state) {
+        var me = this,
+            prefix = Ext.baseCSSPrefix,
+            messageEl = me.messageEl,
+            loadingElement = me.loadingElement;
+
+        if (state === me.currentViewState) {
+            return me;
+        }
+        me.currentViewState = state;
+
+        if (messageEl && loadingElement) {
+            switch (state) {
+                case 'pull':
+                    messageEl.setHtml(me.getPullRefreshText());
+                    loadingElement.removeCls([prefix + 'list-pullrefresh-release', prefix + 'list-pullrefresh-loading']);
+                break;
+
+                case 'release':
+                    messageEl.setHtml(me.getReleaseRefreshText());
+                    loadingElement.addCls(prefix + 'list-pullrefresh-release');
+                break;
+
+                case 'loading':
+                    messageEl.setHtml(me.getLoadingText());
+                    loadingElement.addCls(prefix + 'list-pullrefresh-loading');
+                break;
+
+                case 'loaded':
+                    messageEl.setHtml(me.getLoadedText());
+                    loadingElement.addCls(prefix + 'list-pullrefresh-loaded');
+                    break;
+            }
+        }
+
+        return me;
+    },
+
+    resetRefreshState: function() {
+        var me = this;
+
+        me.isRefreshing = false;
+        me.lastUpdated = new Date();
+
+        me.setViewState('pull');
+        me.updatedEl.setHtml(this.getLastUpdatedText() + '&nbsp;' + Ext.util.Format.date(me.lastUpdated, me.getLastUpdatedDateFormat()));
+    }
+});
+
+/**
  * @aside guide forms
  * @aside example forms
  * @aside example forms-toolbars
@@ -30205,6 +30300,9 @@ Ext.define('Ext.form.FieldSet', {
 });
 
 /**
+ * <p>
+ * <b>repair the Ext.util.DelayedTask Class bug</b>
+ * </p>
  * The DelayedTask class provides a convenient way to "buffer" the execution of a method,<br>
  * performing `setTimeout` where a new timeout cancels the old timeout. When called, the<br>
  * task will wait the specified time period before executing. If during that time period,<br>
@@ -37874,202 +37972,6 @@ Ext.define('Ext.TitleBar', {
     }
 });
 
-/**
- * @aside example video
- * Provides a simple Container for HTML5 Video.
- *
- * ## Notes
- *
- * - There are quite a few issues with the `<video>` tag on Android devices. On Android 2+, the video will
- * appear and play on first attempt, but any attempt afterwards will not work.
- *
- * ## Useful Properties
- *
- * - {@link #url}
- * - {@link #autoPause}
- * - {@link #autoResume}
- *
- * ## Useful Methods
- *
- * - {@link #method-pause}
- * - {@link #method-play}
- * - {@link #toggle}
- *
- * ## Example
- *
- *     var panel = Ext.create('Ext.Panel', {
- *         fullscreen: true,
- *         items: [
- *             {
- *                 xtype    : 'video',
- *                 x        : 600,
- *                 y        : 300,
- *                 width    : 175,
- *                 height   : 98,
- *                 url      : "porsche911.mov",
- *                 posterUrl: 'porsche.png'
- *             }
- *         ]
- *     });
- */
-Ext.define('Ext.Video', {
-    extend: 'Ext.Media',
-    xtype: 'video',
-
-    config: {
-        /**
-         * @cfg {String/Array} url
-         * Location of the video to play. This should be in H.264 format and in a .mov file format.
-         * @accessor
-         */
-
-        /**
-         * @cfg {String} posterUrl
-         * Location of a poster image to be shown before showing the video.
-         * @accessor
-         */
-        posterUrl: null,
-
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        cls: Ext.baseCSSPrefix + 'video'
-    },
-
-    template: [{
-        /**
-         * @property {Ext.dom.Element} ghost
-         * @private
-         */
-        reference: 'ghost',
-        classList: [Ext.baseCSSPrefix + 'video-ghost']
-    }, {
-        tag: 'video',
-        reference: 'media',
-        classList: [Ext.baseCSSPrefix + 'media']
-    }],
-
-    initialize: function() {
-        var me = this;
-
-        me.callParent();
-
-        me.media.hide();
-
-        me.onBefore({
-            erased: 'onErased',
-            scope: me
-        });
-
-        me.ghost.on({
-            tap: 'onGhostTap',
-            scope: me
-        });
-
-        me.media.on({
-            pause: 'onPause',
-            scope: me
-        });
-
-        if (Ext.os.is.Android4 || Ext.os.is.iPad) {
-            this.isInlineVideo = true;
-        }
-    },
-
-    applyUrl: function(url) {
-        return [].concat(url);
-    },
-
-    updateUrl: function(newUrl) {
-        var me = this,
-            media = me.media,
-            newLn = newUrl.length,
-            existingSources = media.query('source'),
-            oldLn = existingSources.length,
-            i;
-
-
-        for (i = 0; i < oldLn; i++) {
-            Ext.fly(existingSources[i]).destroy();
-        }
-
-        for (i = 0; i < newLn; i++) {
-            media.appendChild(Ext.Element.create({
-                tag: 'source',
-                src: newUrl[i]
-            }));
-        }
-
-        if (me.isPlaying()) {
-            me.play();
-        }
-    },
-
-    onErased: function() {
-        this.pause();
-        this.media.setTop(-2000);
-        this.ghost.show();
-    },
-
-    /**
-     * @private
-     * Called when the {@link #ghost} element is tapped.
-     */
-    onGhostTap: function() {
-        var me = this,
-            media = this.media,
-            ghost = this.ghost;
-
-        media.show();
-        if (Ext.browser.is.AndroidStock2) {
-            setTimeout(function() {
-                me.play();
-                setTimeout(function() {
-                    media.hide();
-                }, 10);
-            }, 10);
-        } else {
-            // Browsers which support native video tag display only, move the media down so
-            // we can control the Viewport
-            ghost.hide();
-            me.play();
-        }
-    },
-
-    /**
-     * @private
-     * native video tag display only, move the media down so we can control the Viewport
-     */
-    onPause: function() {
-        this.callParent(arguments);
-        if (!this.isInlineVideo) {
-            this.media.setTop(-2000);
-            this.ghost.show();
-        }
-    },
-
-    /**
-     * @private
-     * native video tag display only, move the media down so we can control the Viewport
-     */
-    onPlay: function() {
-        this.callParent(arguments);
-        this.media.setTop(0);
-    },
-
-    /**
-     * Updates the URL to the poster, even if it is rendered.
-     * @param {Object} newUrl
-     */
-    updatePosterUrl: function(newUrl) {
-        var ghost = this.ghost;
-        if (ghost) {
-            ghost.setStyle('background-image', 'url(' + newUrl + ')');
-        }
-    }
-});
-
 Ext.define("LCTY.default.DefaultView", {
 	extend: "Ext.Container",
 	alias: "widget.defaultView",
@@ -38077,10 +37979,9 @@ Ext.define("LCTY.default.DefaultView", {
 	initialize: function() {
 		var title = this.getTitle(), tbar = this.getTbar();
 		if (this.getIsHaveBack()) {
-			var text = this.getUseTitleForBackButtonText() ? this.getLastTitle() : this.getDefaultBackButtonText();
 			tbar.push({
 				xtype: "button",
-				text: text,
+				text: this.getBackButtonText(),
 				ui: 'back',
 				scope: this,
 				handler: function() {
@@ -38088,7 +37989,27 @@ Ext.define("LCTY.default.DefaultView", {
 				}
 			});
 		}
+		if (this.getIsHaveSearch()) {
+			var text = this.getDefaultSearchButtonText();
+			tbar.push({
+				xtype: 'button',
+				text: text,
+				ui: 'dark',
+				align: 'right',
+				scope: this,
+				handler: function() {
+					this.getSearchFn().call(this, this);
+				}
+			});
+		}
 		if (title || tbar.length > 0) {
+			Ext.create('Ext.navigation.Bar', {
+				title: title,
+				docked: 'top',
+				ui: 'dark',
+				view: '',
+				items: tbar
+			});
 			this.add([{
 				xtype: 'titlebar',
 				title: title,
@@ -38102,9 +38023,11 @@ Ext.define("LCTY.default.DefaultView", {
 	config: {
 		tbar: [],
 		title: null,
+		view: null,
 		lastTitle: '',
 		useTitleForBackButtonText: false,
 		defaultBackButtonText: "返回",
+		defaultSearchButtonText: '查询',
 		/**
 		 * 返回按钮,适用于navigationview
 		 * 
@@ -38135,11 +38058,151 @@ Ext.define("LCTY.default.DefaultView", {
 		 * @type Mixed
 		 */
 		backNum: null,
+		/**
+		 * 查询按钮
+		 * 
+		 * @default false
+		 * @type Boolean
+		 */
+		isHaveSearch: false,
+		/**
+		 * 查询集合
+		 * 
+		 * @type Array
+		 */
+		searchItems: [],
+		/**
+		 * 查询按钮动作
+		 * 
+		 * @type Function
+		 */
+		searchFn: function(view) {
+			this.defaultSearch(view);
+		},
 		layout: {
 			type: 'fit'
 		}
+	},
+	/**
+	 * 默认查询按钮动作
+	 */
+	defaultSearch: function(view) {
+		var me = this, parent = me.up();
+		if (!me.searchForm || !me.searchForm.element) {
+			parent.getLayout().setAnimation({
+				type: 'flip'
+			});
+			me.searchForm = parent.push({
+				xtype: 'defaultForm',
+				isHaveBack: true,
+				title: '查询条件',
+				view: parent,
+				scrollable: true,
+				// modal: true,
+				// hideOnMaskTap: true,
+				// showAnimation: {
+				// type: 'popIn',
+				// duration: 250,
+				// easing: 'ease-out'
+				// },
+				// hideAnimation: {
+				// type: 'popOut',
+				// duration: 250,
+				// easing: 'ease-out'
+				// },
+				// centered: true,
+				// top: '10%',
+				// left: Ext.filterPlatform('ie10') ? 0 : '10%',
+				// right: Ext.filterPlatform('ie10') ? 0 : '10%',
+				// bottom: '10%',
+				// styleHtmlContent: true,
+				backHandler: function() {
+					parent.animateActiveItem(me, {
+						type: 'flip'
+					});
+					parent.getLayout().setAnimation({
+						duration: 300,
+						easing: 'ease-out',
+						type: 'slide',
+						direction: 'left'
+					});
+				},
+				items: [{
+					xtype: "fieldset",
+					items: me.getSearchItems()
+				}],
+				listeners: {
+					hide: function() {
+						console.log('hide');
+						// Ext.apply(list.getParams(), this.getValues());
+						// list.load();
+					}
+				}
+			});
+			// this.searchForm = Ext.Viewport.add();
+		}
+		// this.searchForm.show();
+		parent.animateActiveItem(me.searchForm, {
+			type: 'flip'
+		});
+	},
+	destroy: function() {
+		if (this.searchForm) {
+			this.searchForm.destroy();
+		}
+		this.callParent(arguments);
+	},
+	getBackButtonText: function() {
+		var nBar = this.getView() ? this.getView().getNavigationBar() : null, text = nBar ? nBar.backButtonStack[nBar.backButtonStack.length - 1] : '', useTitle = this.getUseTitleForBackButtonText();
+		if (!useTitle) {
+			if (text) {
+				text = this.getDefaultBackButtonText();
+			}
+		}
+		return text;
 	}
 });
+Ext.define('LCTY.view.index.ProductLog', {
+	extend: 'LCTY.default.DefaultView',
+	alias: "widget.productLog",
+	config: {
+		title: '生产日报',
+		isHaveBack: true,
+		isHaveSearch: true,
+		items: [{
+			xtype: 'tabpanel',
+			ui: 'light',
+			tabBar: {
+				// ui: 'light',
+				layout: {
+					pack: 'center'
+				}
+			},
+			activeTab: 1,
+			defaults: {
+				scrollable: true
+			},
+			items: [{
+				title: '运行',
+				html: '运行',
+				cls: 'card dark'
+			}, {
+				title: '生产',
+				html: '生产',
+				cls: 'card'
+			}, {
+				title: '电量',
+				html: '<span class="action">电量</span>',
+				cls: 'card dark'
+			}, {
+				title: '燃料',
+				html: '<span class="action">燃料</span>',
+				cls: 'card dark'
+			}]
+		}]
+	}
+});
+
 /**
  * @private
  */
@@ -39735,9 +39798,10 @@ Ext.define('Ext.tab.Panel', {
 Ext.define('LCTY.view.Main', {
 	extend: 'Ext.tab.Panel',
 	xtype: 'main',
-	requires: ['Ext.TitleBar', 'Ext.Video'],
+	requires: ['Ext.TitleBar'],
 	config: {
 		tabBarPosition: 'bottom',
+		ui: 'light',
 		items: [{
 			iconCls: 'home',
 			title: '生产信息',
@@ -40845,24 +40909,13 @@ Ext.define("LCTY.view.index.IndexMain", {
 				}
 			}
 		};
-		this.add( [indexMenuList]);
-		this.on("pop", this.onPop, this);
-		this.addBeforeListener("push", this.onBeforePush, this);
+		this.add([indexMenuList]);
 	},
 	config: {
 		useTitleForBackButtonText: true,
 		navigationBar: false
 	},
-	onBeforePush: function(indexMain, view, eOpts) {
-		console.log(indexMain.title);
-	},
-	onPop: function(indexMain, view, eOpts) {
-		var navigationBar = this.getNavigationBar();
-		// navigationBar.removeAt(navigationBar.getItems().length - 1);
-		// console.log(navigationBar.getItems().length);
-	},
 	onIndexMenuListItemtap: function(list, index, target, record, e, eOpts) {
-		// console.log("editNoteCommand");
 		this.fireEvent('menuCommand', this, record);
 	}
 });
@@ -40877,10 +40930,9 @@ Ext.define('LCTY.default.Highstock', {
 		var title = this.getTitle(), tbar = this.getTbar();
 		
 		if (this.getIsHaveBack()) {
-			var text = this.getUseTitleForBackButtonText() ? this.getLastTitle() : this.getDefaultBackButtonText();
 			tbar.push({
 				xtype: "button",
-				text: text,
+				text: this.getBackButtonText(),
 				ui: 'back',
 				scope: this,
 				handler: function() {
@@ -40911,10 +40963,10 @@ Ext.define('LCTY.default.Highstock', {
 		highstockConfig: null,
 		loadingText: "正在加载中,请稍后......",
 		defaultBackButtonText: "返回",
-		lastTitle: '',
 		useTitleForBackButtonText: false,
 		tbar: [],
 		title: null,
+		view: null,
 		/**
 		 * 是否自动加载列表数据
 		 * 
@@ -41052,6 +41104,15 @@ Ext.define('LCTY.default.Highstock', {
 	},
 	putData: function(dataArr) {
 		if (this.series) {}
+	},
+	getBackButtonText: function() {
+		var nBar = this.getView() ? this.getView().getNavigationBar() : null, text = nBar ? nBar.backButtonStack[nBar.backButtonStack.length - 1] : '', useTitle = this.getUseTitleForBackButtonText();
+		if (!useTitle) {
+			if (text) {
+				text = this.getDefaultBackButtonText();
+			}
+		}
+		return text;
 	}
 });
 Ext.define('LCTY.view.index.RtChart', {
@@ -41187,6 +41248,7 @@ Ext.define("LCTY.controller.index.RtInfoList", {
 	},
 	onRtInfoListCommand: function(list, record) {
 		var view = Ext.create("LCTY.view.index.RtChart", {
+			view: this.getIndexMain(),
 			params: {
 				rtInfoId: record.get("rtInfoId")
 			},
@@ -48471,20 +48533,34 @@ Ext.define('Ext.dataview.List', {
 Ext.define("LCTY.default.DefaultList", {
 	extend: "Ext.dataview.List",
 	alias: "widget.defaultList",
-	requires: ["Ext.plugin.ListPaging", "Ext.TitleBar"],
+	requires: ["Ext.plugin.ListPaging", "Ext.plugin.PullRefresh", "Ext.TitleBar"],
 	initialize: function() {
 		
-		if (this.getIsHavePage()) {
+		if (this.getIsHavePage() || this.getIsHaveReload()) {
 			var plugins = this.getPlugins(), plugs = [], i = 0;
-			
-			plugs.push({
-				xclass: 'Ext.plugin.ListPaging',
-				loadMoreText: '加载更多...',
-				noMoreRecordsText: '全部加载完毕',
-				autoPaging: true
-			});
-			
+			if (this.getIsHavePage()) {
+				
+				plugs.push({
+					xclass: 'Ext.plugin.ListPaging',
+					loadMoreText: '上拉显示下10条',
+					noMoreRecordsText: '全部加载完毕',
+					autoPaging: true
+				});
+				
+			}
+			if (this.getIsHaveReload()) {
+				plugs.push({
+					xclass: 'Ext.plugin.PullRefresh',
+					lastUpdatedText: '最后更新时间',
+					pullRefreshText: '下拉刷新',
+					loadingText: '正在加载中,请稍后......',
+					loadedText: '加载完毕',
+					releaseRefreshText: '释放刷新',
+					lastUpdatedDateFormat: 'Y-m-d H:i:s'
+				});
+			}
 			if (plugins) {
+				console.log(plugins);
 				for (; i < plugins.length; i++) {
 					plugs.push(plugins[i].config);
 				}
@@ -48496,10 +48572,9 @@ Ext.define("LCTY.default.DefaultList", {
 		var title = this.getTitle(), tbar = this.getTbar();
 		
 		if (this.getIsHaveBack()) {
-			var text = this.getUseTitleForBackButtonText() ? this.getLastTitle() : this.getDefaultBackButtonText();
 			tbar.push({
 				xtype: "button",
-				text: text,
+				text: this.getBackButtonText(),
 				ui: 'back',
 				scope: this,
 				handler: function() {
@@ -48531,7 +48606,13 @@ Ext.define("LCTY.default.DefaultList", {
 		}
 		
 		if (this.getIsAutoLoad()) {
-			this.load({}, true);
+			this.on({
+				show: function() {
+					this.load({}, true);
+				},
+				scope: this,
+				single: true
+			});
 		}
 		this.callParent(arguments);
 	},
@@ -48542,6 +48623,7 @@ Ext.define("LCTY.default.DefaultList", {
 		defaultBackButtonText: "返回",
 		defaultSearchButtonText: '查询',
 		lastTitle: '',
+		view: null,
 		useTitleForBackButtonText: false,
 		tbar: [],
 		title: null,
@@ -48558,6 +48640,12 @@ Ext.define("LCTY.default.DefaultList", {
 		 * @type Boolean
 		 */
 		isHavePage: true,
+		/**
+		 * 是否下拉刷新
+		 * 
+		 * @type Boolean
+		 */
+		isHaveReload: false,
 		/**
 		 * 是否自动加载列表数据
 		 * 
@@ -48641,6 +48729,7 @@ Ext.define("LCTY.default.DefaultList", {
 			me.searchForm = parent.push({
 				xtype: 'defaultForm',
 				isHaveBack: true,
+				view: parent,
 				title: '查询条件',
 				scrollable: true,
 				// modal: true,
@@ -48696,6 +48785,15 @@ Ext.define("LCTY.default.DefaultList", {
 			this.searchForm.destroy();
 		}
 		this.callParent(arguments);
+	},
+	getBackButtonText: function() {
+		var nBar = this.getView() ? this.getView().getNavigationBar() : null, text = nBar ? nBar.backButtonStack[nBar.backButtonStack.length - 1] : '', useTitle = this.getUseTitleForBackButtonText();
+		if (!useTitle) {
+			if (text) {
+				text = this.getDefaultBackButtonText();
+			}
+		}
+		return text;
 	}
 });
 Ext.define("LCTY.view.index.IndexMenuList", {
@@ -48786,7 +48884,6 @@ Ext.define("LCTY.view.index.RtList", {
 					left: Ext.filterPlatform('ie10') ? 0 : '10%',
 					right: Ext.filterPlatform('ie10') ? 0 : '10%',
 					bottom: '10%',
-					styleHtmlContent: true,
 					items: [{
 						xtype: "fieldset",
 						items: me.getSearchItems()
@@ -48814,14 +48911,13 @@ Ext.define("LCTY.view.index.DefectList", {
 	initialize: function() {
 		this.on({
 			itemtap: this.onDefectListItemtap,
-			show: this.onShow,
 			scope: this
 		});
-		console.log(this.getLastTitle());
 		this.callParent(arguments);
 	},
 	config: {
 		title: '缺陷数据列表',
+		isHaveReload: true,
 		itemHeight: 65,
 		// grouped: false,
 		itemTpl: [// 子项样式
@@ -48851,11 +48947,7 @@ Ext.define("LCTY.view.index.DefectList", {
 	},
 	onDefectListItemtap: function(list, index, target, record, e, eOpts) {
 		this.fireEvent('defectListCommand', this, record);
-	},
-	onShow: function() {
-		console.log(this.getLastTitle());
 	}
-	
 });
 Ext.define("LCTY.view.index.RtInfoList", {
 	extend: "LCTY.default.DefaultList",
@@ -50447,14 +50539,13 @@ Ext.define("LCTY.default.DefaultForm", {
 	initialize: function() {
 		var title = this.getTitle(), tbar = this.getTbar();
 		if (this.getIsHaveBack()) {
-			var text = this.getUseTitleForBackButtonText() ? this.getLastTitle() : this.getDefaultBackButtonText(),
 			// 返回按钮点击事件
-			handler = Ext.Function.bind(this.getBackHandler() || function() {
+			var handler = Ext.Function.bind(this.getBackHandler() || function() {
 				this.up("navigationview").pop();
 			}, this.scope || this || Ext.global);
 			tbar.push({
 				xtype: "button",
-				text: text,
+				text: this.getBackButtonText(),
 				ui: 'back',
 				scope: this,
 				handler: handler
@@ -50484,7 +50575,7 @@ Ext.define("LCTY.default.DefaultForm", {
 	config: {
 		tbar: [],
 		title: null,
-		lastTitle: '',
+		view: null,
 		useTitleForBackButtonText: false,
 		defaultBackButtonText: "返回",
 		/**
@@ -50572,6 +50663,15 @@ Ext.define("LCTY.default.DefaultForm", {
 				success: me.getDoSuccess()
 			});
 		}
+	},
+	getBackButtonText: function() {
+		var nBar = this.getView() ? this.getView().getNavigationBar() : null, text = nBar ? nBar.backButtonStack[nBar.backButtonStack.length - 1] : '', useTitle = this.getUseTitleForBackButtonText();
+		if (!useTitle) {
+			if (text) {
+				text = this.getDefaultBackButtonText();
+			}
+		}
+		return text;
 	}
 });
 Ext.define("LCTY.view.index.InfoView", {
@@ -50629,6 +50729,7 @@ Ext.define("LCTY.controller.index.DefectList", {
 	},
 	onDefectListCommand: function(list, record) {
 		var view = Ext.create('LCTY.default.DefaultView', {
+			view: this.getIndexMain(),
 			title: '缺陷数据',
 			isHaveBack: true,
 			backNum: 'defectList',
@@ -50644,6 +50745,7 @@ Ext.define("LCTY.controller.index.DefectList", {
 	},
 	onTap: function(v, e, target) {
 		var view = Ext.create('LCTY.view.index.InfoView', {
+			view: this.getIndexMain(),
 			title: '设备信息',
 			isHaveBack: true,
 			isAutoLoad: true,

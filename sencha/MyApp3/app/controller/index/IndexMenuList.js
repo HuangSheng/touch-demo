@@ -12,7 +12,9 @@ Ext.define("LCTY.controller.index.IndexMenuList", {
 		}
 	},
 	onMenuCommand: function(indexMain, record) {
-		var view = Ext.create(record.get("extjsClass"));
+		var view = Ext.create(record.get("extjsClass"), {
+			view: indexMain
+		});
 		indexMain.push(view);
 	},
 	// init and launch functions omitted.

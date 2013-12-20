@@ -1,7 +1,7 @@
 Ext.define('LCTY.view.Main', {
 	extend: 'Ext.tab.Panel',
 	xtype: 'main',
-	requires: ['Ext.TitleBar', 'Ext.Video'],
+	requires: ['Ext.TitleBar'],
 	config: {
 		tabBarPosition: 'bottom',
 		ui: 'light',

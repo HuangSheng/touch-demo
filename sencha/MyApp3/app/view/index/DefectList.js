@@ -4,14 +4,13 @@ Ext.define("LCTY.view.index.DefectList", {
 	initialize: function() {
 		this.on({
 			itemtap: this.onDefectListItemtap,
-			show: this.onShow,
 			scope: this
 		});
-		console.log(this.getLastTitle());
 		this.callParent(arguments);
 	},
 	config: {
 		title: '缺陷数据列表',
+		isHaveReload: true,
 		itemHeight: 65,
 		// grouped: false,
 		itemTpl: [// 子项样式
@@ -41,9 +40,5 @@ Ext.define("LCTY.view.index.DefectList", {
 	},
 	onDefectListItemtap: function(list, index, target, record, e, eOpts) {
 		this.fireEvent('defectListCommand', this, record);
-	},
-	onShow: function() {
-		console.log(this.getLastTitle());
 	}
-	
 });

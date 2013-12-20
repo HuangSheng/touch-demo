@@ -1,20 +1,34 @@
 Ext.define("LCTY.default.DefaultList", {
 	extend: "Ext.dataview.List",
 	alias: "widget.defaultList",
-	requires: ["Ext.plugin.ListPaging", "Ext.TitleBar"],
+	requires: ["Ext.plugin.ListPaging", "Ext.plugin.PullRefresh", "Ext.TitleBar"],
 	initialize: function() {
 		
-		if (this.getIsHavePage()) {
+		if (this.getIsHavePage() || this.getIsHaveReload()) {
 			var plugins = this.getPlugins(), plugs = [], i = 0;
-			
-			plugs.push({
-				xclass: 'Ext.plugin.ListPaging',
-				loadMoreText: '加载更多...',
-				noMoreRecordsText: '全部加载完毕',
-				autoPaging: true
-			});
-			
+			if (this.getIsHavePage()) {
+				
+				plugs.push({
+					xclass: 'Ext.plugin.ListPaging',
+					loadMoreText: '上拉显示下10条',
+					noMoreRecordsText: '全部加载完毕',
+					autoPaging: true
+				});
+				
+			}
+			if (this.getIsHaveReload()) {
+				plugs.push({
+					xclass: 'Ext.plugin.PullRefresh',
+					lastUpdatedText: '最后更新时间',
+					pullRefreshText: '下拉刷新',
+					loadingText: '正在加载中,请稍后......',
+					loadedText: '加载完毕',
+					releaseRefreshText: '释放刷新',
+					lastUpdatedDateFormat: 'Y-m-d H:i:s'
+				});
+			}
 			if (plugins) {
+				console.log(plugins);
 				for (; i < plugins.length; i++) {
 					plugs.push(plugins[i].config);
 				}
@@ -26,10 +40,9 @@ Ext.define("LCTY.default.DefaultList", {
 		var title = this.getTitle(), tbar = this.getTbar();
 		
 		if (this.getIsHaveBack()) {
-			var text = this.getUseTitleForBackButtonText() ? this.getLastTitle() : this.getDefaultBackButtonText();
 			tbar.push({
 				xtype: "button",
-				text: text,
+				text: this.getBackButtonText(),
 				ui: 'back',
 				scope: this,
 				handler: function() {
@@ -61,7 +74,13 @@ Ext.define("LCTY.default.DefaultList", {
 		}
 		
 		if (this.getIsAutoLoad()) {
-			this.load({}, true);
+			this.on({
+				show: function() {
+					this.load({}, true);
+				},
+				scope: this,
+				single: true
+			});
 		}
 		this.callParent(arguments);
 	},
@@ -72,6 +91,7 @@ Ext.define("LCTY.default.DefaultList", {
 		defaultBackButtonText: "返回",
 		defaultSearchButtonText: '查询',
 		lastTitle: '',
+		view: null,
 		useTitleForBackButtonText: false,
 		tbar: [],
 		title: null,
@@ -88,6 +108,12 @@ Ext.define("LCTY.default.DefaultList", {
 		 * @type Boolean
 		 */
 		isHavePage: true,
+		/**
+		 * 是否下拉刷新
+		 * 
+		 * @type Boolean
+		 */
+		isHaveReload: false,
 		/**
 		 * 是否自动加载列表数据
 		 * 
@@ -171,6 +197,7 @@ Ext.define("LCTY.default.DefaultList", {
 			me.searchForm = parent.push({
 				xtype: 'defaultForm',
 				isHaveBack: true,
+				view: parent,
 				title: '查询条件',
 				scrollable: true,
 				// modal: true,
@@ -226,5 +253,14 @@ Ext.define("LCTY.default.DefaultList", {
 			this.searchForm.destroy();
 		}
 		this.callParent(arguments);
+	},
+	getBackButtonText: function() {
+		var nBar = this.getView() ? this.getView().getNavigationBar() : null, text = nBar ? nBar.backButtonStack[nBar.backButtonStack.length - 1] : '', useTitle = this.getUseTitleForBackButtonText();
+		if (!useTitle) {
+			if (text) {
+				text = this.getDefaultBackButtonText();
+			}
+		}
+		return text;
 	}
 });

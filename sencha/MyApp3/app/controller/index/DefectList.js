@@ -19,6 +19,7 @@ Ext.define("LCTY.controller.index.DefectList", {
 	},
 	onDefectListCommand: function(list, record) {
 		var view = Ext.create('LCTY.default.DefaultView', {
+			view: this.getIndexMain(),
 			title: '缺陷数据',
 			isHaveBack: true,
 			backNum: 'defectList',
@@ -34,6 +35,7 @@ Ext.define("LCTY.controller.index.DefectList", {
 	},
 	onTap: function(v, e, target) {
 		var view = Ext.create('LCTY.view.index.InfoView', {
+			view: this.getIndexMain(),
 			title: '设备信息',
 			isHaveBack: true,
 			isAutoLoad: true,

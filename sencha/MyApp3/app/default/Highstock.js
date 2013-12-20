@@ -9,10 +9,9 @@ Ext.define('LCTY.default.Highstock', {
 		var title = this.getTitle(), tbar = this.getTbar();
 		
 		if (this.getIsHaveBack()) {
-			var text = this.getUseTitleForBackButtonText() ? this.getLastTitle() : this.getDefaultBackButtonText();
 			tbar.push({
 				xtype: "button",
-				text: text,
+				text: this.getBackButtonText(),
 				ui: 'back',
 				scope: this,
 				handler: function() {
@@ -43,10 +42,10 @@ Ext.define('LCTY.default.Highstock', {
 		highstockConfig: null,
 		loadingText: "正在加载中,请稍后......",
 		defaultBackButtonText: "返回",
-		lastTitle: '',
 		useTitleForBackButtonText: false,
 		tbar: [],
 		title: null,
+		view: null,
 		/**
 		 * 是否自动加载列表数据
 		 * 
@@ -184,5 +183,14 @@ Ext.define('LCTY.default.Highstock', {
 	},
 	putData: function(dataArr) {
 		if (this.series) {}
+	},
+	getBackButtonText: function() {
+		var nBar = this.getView() ? this.getView().getNavigationBar() : null, text = nBar ? nBar.backButtonStack[nBar.backButtonStack.length - 1] : '', useTitle = this.getUseTitleForBackButtonText();
+		if (!useTitle) {
+			if (text) {
+				text = this.getDefaultBackButtonText();
+			}
+		}
+		return text;
 	}
 });

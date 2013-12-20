@@ -755,13 +755,13 @@
                     "path": "touch/src/"
                 },
                 {
-                    "clsName": "Ext.Media",
-                    "name": "Media.js",
-                    "path": "touch/src/"
-                },
-                {
                     "clsName": "Ext.plugin.ListPaging",
                     "name": "ListPaging.js",
+                    "path": "touch/src/plugin/"
+                },
+                {
+                    "clsName": "Ext.plugin.PullRefresh",
+                    "name": "PullRefresh.js",
                     "path": "touch/src/plugin/"
                 },
                 {
@@ -910,14 +910,14 @@
                     "path": "touch/src/"
                 },
                 {
-                    "clsName": "Ext.Video",
-                    "name": "Video.js",
-                    "path": "touch/src/"
-                },
-                {
                     "clsName": "LCTY.default.DefaultView",
                     "name": "DefaultView.js",
                     "path": "app/default/"
+                },
+                {
+                    "clsName": "LCTY.view.index.ProductLog",
+                    "name": "ProductLog.js",
+                    "path": "app/view/index/"
                 },
                 {
                     "clsName": "Ext.util.Collection",

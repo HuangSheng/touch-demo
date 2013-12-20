@@ -50,7 +50,6 @@ Ext.define("LCTY.view.index.RtList", {
 					left: Ext.filterPlatform('ie10') ? 0 : '10%',
 					right: Ext.filterPlatform('ie10') ? 0 : '10%',
 					bottom: '10%',
-					styleHtmlContent: true,
 					items: [{
 						xtype: "fieldset",
 						items: me.getSearchItems()

@@ -15,6 +15,7 @@ Ext.define("LCTY.controller.index.RtInfoList", {
 	},
 	onRtInfoListCommand: function(list, record) {
 		var view = Ext.create("LCTY.view.index.RtChart", {
+			view: this.getIndexMain(),
 			params: {
 				rtInfoId: record.get("rtInfoId")
 			},

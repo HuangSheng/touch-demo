@@ -1,5 +1,6 @@
 Ext.define('LCTY.view.index.ProductLog', {
 	extend: 'LCTY.default.DefaultView',
+	alias: "widget.productLog",
 	config: {
 		title: '生产日报',
 		isHaveBack: true,
